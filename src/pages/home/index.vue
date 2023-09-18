@@ -1,0 +1,218 @@
+<template>
+  <div class="container">
+    <!-- 主页顶部 -->
+    <div class="top">
+      <!-- 左侧大分类 -->
+      <ul>
+        <li>
+          <div class="avatar"></div>
+          <span>动态</span>
+        </li>
+        <li>
+          <div class="avatar">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 22 22"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon-bg--icon">
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M4.89054 17.272L4.89277 17.2742C6.49674 18.8782 8.66472 19.7888 10.9624 19.7888C13.2503 19.7888 15.2113 19.0539 16.6107 17.6108L16.6108 17.6108L16.6128 17.6086C18.0002 16.1345 18.7835 14.182 18.7421 12.1819C18.7852 11.3835 18.6916 9.36321 17.4088 6.75488L17.4082 6.7537C17.209 6.35523 16.8163 6.06598 16.3391 5.96993C15.8904 5.87103 15.4021 6.01997 15.061 6.35741C14.9094 6.48781 14.7796 6.61755 14.6655 6.7317L14.6637 6.73348L14.6329 6.76426C14.2107 3.35588 12.6083 1.7368 11.1654 1.00465C11.148 0.987812 11.1265 0.967972 11.1036 0.950782C11.0775 0.931205 11.0311 0.900467 10.9694 0.888912C10.2276 0.608301 9.41043 1.01168 9.1237 1.77629L9.12314 1.7778C8.50566 3.46558 7.35287 4.62281 6.16627 5.76704C4.51756 7.33121 2.75938 9.03623 2.80163 12.093C2.75906 14.055 3.54464 15.8826 4.89054 17.272ZM3.04999 13.0648C3.01092 12.7459 2.99439 12.4218 3.00168 12.0939C2.95933 9.12977 4.6531 7.47834 6.30453 5.9116C7.49017 4.76831 8.67581 3.58267 9.31098 1.84655C9.56504 1.16904 10.2849 0.830288 10.9201 1.08435C10.9624 1.08435 11.0048 1.1267 11.0471 1.16904C11.9267 1.60884 12.8853 2.39635 13.5753 3.77299C12.8853 2.39633 11.9267 1.6088 11.0471 1.16901C11.0047 1.12666 10.9624 1.08432 10.9201 1.08432C10.2849 0.830251 9.56503 1.16901 9.31097 1.84651C8.6758 3.58263 7.49016 4.76827 6.30452 5.91157C4.65309 7.47831 2.95932 9.12973 3.00166 12.0938C2.99438 12.4218 3.01092 12.7459 3.04999 13.0648ZM14.477 7.18189C14.477 7.1819 14.477 7.18192 14.477 7.18193C14.5828 7.09724 14.6887 6.99138 14.8052 6.87493C14.9216 6.75849 15.0486 6.63146 15.1968 6.50442C15.4932 6.20801 15.9167 6.08098 16.2978 6.16567C16.7212 6.25036 17.06 6.50443 17.2294 6.84318C17.3088 7.0046 17.3835 7.16371 17.4539 7.32035C17.3835 7.1637 17.3087 7.00458 17.2294 6.84314C17.06 6.50439 16.7212 6.25032 16.2978 6.16563C15.9167 6.08094 15.4932 6.20798 15.1968 6.50439C15.0486 6.63142 14.9216 6.75845 14.8051 6.87489L14.8051 6.8749C14.7557 6.92437 14.7081 6.97191 14.6617 7.01675C14.5988 7.07745 14.5379 7.13318 14.477 7.18189ZM12.6977 6.35925C12.8428 7.15476 12.8833 7.97963 12.8679 8.74864C12.8679 8.79032 12.8704 8.8315 12.8754 8.87195C12.8704 8.83151 12.8679 8.79035 12.8679 8.74867C12.8833 7.97966 12.8428 7.15478 12.6977 6.35925ZM16.7358 10.6654C16.8108 11.1478 16.8483 11.6393 16.8483 12.1362V12.1786C16.8483 13.703 16.2978 15.2274 15.2392 16.3283C14.0535 17.4293 12.5291 18.0221 10.9201 17.9374C9.1416 17.9374 7.44783 17.2175 6.21984 15.9472C5.82743 15.5548 5.50448 15.1119 5.25584 14.6331C5.50447 15.1119 5.82743 15.5548 6.21983 15.9472C7.44782 17.2175 9.14159 17.9373 10.9201 17.9373C12.5291 18.022 14.0535 17.4292 15.2392 16.3283C16.2978 15.2273 16.8483 13.7029 16.8483 12.1785V12.1362C16.8483 11.6393 16.8108 11.1478 16.7358 10.6654ZM10.9306 17.7376C12.4802 17.8192 13.9509 17.2497 15.0989 16.1856C16.1154 15.1261 16.6483 13.655 16.6483 12.1785V12.1362C16.6483 10.8624 16.3969 9.6266 15.8955 8.49474C15.2436 9.11663 14.7845 9.49093 14.4179 9.68717C14.2122 9.79725 14.0268 9.85633 13.846 9.86789C13.6644 9.8795 13.5028 9.84219 13.3473 9.78249C12.9207 9.62211 12.6679 9.20129 12.6679 8.74864V8.74464L12.6679 8.74464C12.6889 7.69735 12.6046 6.55594 12.2954 5.53554C12.01 4.59379 11.5372 3.76766 10.7904 3.20655C9.96581 4.94926 8.72521 6.18561 7.58695 7.28323L7.50836 7.35967C5.97191 8.85397 4.81321 9.98087 4.85306 12.1325L4.85313 12.1362H4.85309C4.85309 13.5239 5.38326 14.8277 6.36125 15.8057L6.36365 15.8081L6.36363 15.8082C7.55387 17.0394 9.19573 17.7374 10.9201 17.7374H10.9306L10.9306 17.7376Z"
+                fill="#ffffff"></path>
+            </svg>
+          </div>
+          <span>热门</span>
+        </li>
+        <!-- <li>
+          <div class="avatar"></div>
+          <span>频道</span>
+        </li> -->
+      </ul>
+      <!-- 中间小分类 -->
+      <div class="top_middle">
+        <el-button
+          size="default"
+          class="category"
+          text
+          bg
+          v-for="(item, index) in channelArr"
+          :key="index"
+          >{{ item.channel }}</el-button
+        >
+      </div>
+      <div class="line"></div>
+      <!-- 右侧其他栏目 -->
+      <div class="top_right">
+        <el-button class="button" link :icon="Document"> 专栏 </el-button>
+        <el-button class="button" link :icon="Document"> 活动 </el-button>
+        <el-button class="button" link :icon="Document"> 社区中心 </el-button>
+        <el-button class="button" link :icon="Document"> 直播 </el-button>
+        <el-button class="button" link :icon="Document"> 课堂 </el-button>
+        <el-button class="button" link :icon="Document"> 新歌热榜 </el-button>
+      </div>
+    </div>
+    <!-- 主页内容区-第一部分 -->
+    <div class="first-section">
+      <div class="left">
+        <!-- 轮播图 -->
+        <carousel />
+      </div>
+      <div class="right">
+        <div class="videoBox">
+          <div
+            v-for="(item, index) in videoArr"
+            :key="index"
+            class="videoBox_item">
+            <VideoBox :videoInfo="item" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 主页底部 -->
+    <div class="footer"></div>
+  </div>
+</template>
+
+<script setup lang="ts">
+// @ts-ignore
+import { Document } from '@element-plus/icons-vue';
+// 引入轮播图组件
+// @ts-ignore
+import carousel from './carousel/index.vue';
+import { onMounted, ref } from 'vue';
+import { reqChannel } from '@/api/home/index.ts';
+import { reqVideo } from '@/api/video/index.ts';
+import type { ChannelContent, ChannelResponseData } from '@/api/home/type.ts';
+import type { VideoResponseData, VideoContent } from '@/api/video/type.ts';
+let channelArr = ref<ChannelContent>([]);
+let videoArr = ref<VideoContent>([]);
+
+// 组件挂载完毕发送一次请求
+onMounted(() => {
+  getChannelInfo();
+  getVideoInfo();
+});
+
+// 获取频道数据
+const getChannelInfo = async () => {
+  let result: ChannelResponseData = await reqChannel();
+  if (result.status == 200) channelArr.value = result.data;
+};
+// 获取视频列表
+const getVideoInfo = async () => {
+  let result: VideoResponseData = await reqVideo();
+  if (result.status == 200) {
+    const arrIndex: Array<number> = [];
+    const arrformat: Array<any> = [];
+    while (arrIndex.length < 6) {
+      let random = Math.floor(Math.random() * result.data.length);
+      if (!arrIndex.includes(random)) {
+        arrIndex.push(random);
+        arrformat.push(result.data[random]);
+      }
+    }
+    videoArr.value = arrformat;
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+.container {
+  display: flex;
+  flex-direction: column;
+  .top {
+    width: 100%;
+    height: 110px;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    ::v-deep(.el-icon) {
+      padding-right: 4px;
+      vertical-align: bottom;
+    }
+    ul {
+      display: flex;
+      li {
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 20px;
+        .avatar {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          margin-bottom: 10px;
+        }
+        &:first-child .avatar {
+          background-image: url('../../assets/images/hotspot.avif');
+          background-repeat: no-repeat;
+          background-size: cover;
+        }
+        &:last-child .avatar {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: #f07775;
+        }
+      }
+    }
+    .top_middle {
+      width: 920px;
+      display: flex;
+      flex-wrap: wrap;
+      height: 80px;
+      .category {
+        margin: 6px 8px 0 0;
+        width: 75px;
+        height: 27px;
+      }
+    }
+    .line {
+      height: 70px;
+      margin: 0 14px 0 10px;
+      border-right: 1px solid rgba(128, 128, 128, 0.3);
+    }
+    .top_right {
+      width: 220px;
+      display: flex;
+      flex-wrap: wrap;
+      .button {
+        height: 28px;
+        margin: 0;
+        font-size: 16px;
+        color: #61666d;
+        font-weight: 500;
+        &:hover {
+          color: #00aeec;
+        }
+      }
+    }
+  }
+  .first-section {
+    display: flex;
+    .videoBox {
+      display: flex;
+      flex-wrap: wrap;
+      .videoBox_item {
+        margin: 0 8px 10px;
+        &:nth-child(3n-2) {
+          margin-left: 18px;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1199px) {
+  .container {
+    .top {
+      width: 1124px;
+    }
+  }
+}
+</style>
