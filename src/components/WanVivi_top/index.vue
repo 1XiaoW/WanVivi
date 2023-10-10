@@ -69,7 +69,27 @@
       </div>
       <div class="right">
         <ul>
-          <li><div class="avatar"></div></li>
+          <li>
+            <!-- <div class="avatar" @click="login">
+              <img :src="server_url + userStore.userInfo.avatar" alt="" />
+            </div> -->
+            <div>
+              <el-dropdown v-if="userStore.isLogin">
+                <span class="avatar">
+                  <img :src="server_url + userStore.userInfo.avatar" alt="" />
+                </span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item>个人中心</el-dropdown-item>
+                    <el-dropdown-item @click="logout"
+                      >退出登录</el-dropdown-item
+                    >
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+              <span v-else @click="login">登录</span>
+            </div>
+          </li>
           <li>
             <el-icon size="18"><Search /></el-icon>小会员
           </li>
@@ -95,22 +115,40 @@
       </div>
     </div>
   </div>
+  <Login_Register></Login_Register>
 </template>
 
 <script setup lang="ts">
 //@ts-ignore
 import { VideoCamera, Download, Search, Upload } from '@element-plus/icons-vue';
 import { ref, onMounted } from 'vue';
+//获取user仓库的数据（visiable）可以控制login组件的对话框显示与隐藏
+import useUserStore from '@/store/modules/user';
 //@ts-ignore
 import search from './search/index.vue';
+let userStore = useUserStore();
+let server_url = import.meta.env.VITE_SERVER_URL;
 
 let vidRef = ref();
 let x: number = 0;
 let _x = null;
 let isFixed = ref<boolean>(false);
+
 onMounted(() => {
   document.addEventListener('scroll', getWindowY);
 });
+
+//点击登录与注册按钮的时候弹出对话框
+const login = () => {
+  userStore.visible = true;
+};
+
+//退出登录的回调
+const logout = () => {
+  //通知pinia仓库清除用户相关的信息
+  userStore.logout();
+  userStore.isLogin = false;
+};
 
 const handleMouseEnter = (e: MouseEvent) => {
   x = e.clientX;
@@ -190,7 +228,7 @@ const getWindowY = () => {
             animation: bounce 0.3s linear;
           }
         }
-        .avatar {
+        .avatar img {
           width: 40px;
           height: 40px;
           background-color: #ccc;

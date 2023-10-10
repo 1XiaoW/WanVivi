@@ -130,7 +130,7 @@ const changeBanner = (index: any, is_prev1?: any) => {
   }
   // --m-left,--b-color是css的自定义属性、
   // 设置偏移量到达显示指定图片的目的
-  (document.querySelector('.img-box') as HTMLElement).style.setProperty(
+  (document.querySelector('.img-box') as HTMLElement)?.style.setProperty(
     '--m-left',
     `${active_index.value}`
   );

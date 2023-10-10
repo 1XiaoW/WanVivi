@@ -1,7 +1,7 @@
 // 对axios函数进行二次封装
 import axios from 'axios';
 // 引入用户相关的仓库
-
+import useUserStore from '@/store/modules/user';
 // @ts-ignore
 import { ElMessage } from 'element-plus';
 
@@ -14,7 +14,11 @@ const request = axios.create({
 // 请求拦截器
 request.interceptors.request.use(config => {
   // 获取用户仓库
+  let userStore = useUserStore();
   // token：公共参数，如果用户登录了要携带
+  if (userStore.userInfo.token) {
+    config.headers.token = userStore.userInfo.token;
+  }
   // 一定要将config返回出去不然会卡在这里
   return config;
 });

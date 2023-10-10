@@ -10,12 +10,16 @@ export default createRouter({
       component: () => import('@/pages/home/index.vue'),
     },
     {
-      path: '/music',
-      component: () => import('@/pages/music/index.vue'),
+      path: '/submit',
+      component: () => import('@/pages/submit/index.vue'),
     },
     {
       path: '/video',
       component: () => import('@/pages/video/index.vue'),
+    },
+    {
+      path: '/userInfo',
+      component: () => import('@/pages/user/userinfo.vue'),
     },
     {
       path: '/',

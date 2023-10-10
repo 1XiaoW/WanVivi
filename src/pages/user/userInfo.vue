@@ -1,5 +1,5 @@
 <template>
-  <div class="">音乐</div>
+  <div class="">个人信息</div>
 </template>
 
 <script setup lang="ts"></script>

@@ -38,7 +38,7 @@
           class="category"
           text
           bg
-          v-for="(item, index) in channelArr"
+          v-for="(item, index) in useChannel.channelList"
           :key="index"
           >{{ item.channel }}</el-button
         >
@@ -66,7 +66,9 @@
             v-for="(item, index) in videoArr"
             :key="index"
             class="videoBox_item">
-            <VideoBox :videoInfo="item" />
+            <VideoBox
+              :videoInfo="item"
+              @click="videoBoxHandler(item.video_id)" />
           </div>
         </div>
       </div>
@@ -82,27 +84,38 @@ import { Document } from '@element-plus/icons-vue';
 // 引入轮播图组件
 // @ts-ignore
 import carousel from './carousel/index.vue';
+import { ElMessage } from 'element-plus';
 import { onMounted, ref } from 'vue';
-import { reqChannel } from '@/api/home/index.ts';
 import { reqVideo } from '@/api/video/index.ts';
-import type { ChannelContent, ChannelResponseData } from '@/api/home/type.ts';
+import { useRouter } from 'vue-router';
 import type { VideoResponseData, VideoContent } from '@/api/video/type.ts';
-let channelArr = ref<ChannelContent>([]);
+// 以下代码有pinia接管
+// import { reqChannel } from '@/api/home/index.ts';
+// import type { ChannelContent, ChannelResponseData } from '@/api/home/type.ts';
+// let channelArr = ref<ChannelContent>([]);
+import useChannelStore from '@/store/modules/channel.ts';
 let videoArr = ref<VideoContent>([]);
-
+let $router = useRouter();
+let useChannel = useChannelStore();
 // 组件挂载完毕发送一次请求
 onMounted(() => {
   getChannelInfo();
-  getVideoInfo();
+  getVideoList();
 });
 
 // 获取频道数据
 const getChannelInfo = async () => {
-  let result: ChannelResponseData = await reqChannel();
-  if (result.status == 200) channelArr.value = result.data;
+  try {
+    await useChannel.getChannelList();
+  } catch (error) {
+    ElMessage({
+      type: 'error',
+      message: '获取频道列表失败',
+    });
+  }
 };
 // 获取视频列表
-const getVideoInfo = async () => {
+const getVideoList = async () => {
   let result: VideoResponseData = await reqVideo();
   if (result.status == 200) {
     const arrIndex: Array<number> = [];
@@ -116,6 +129,11 @@ const getVideoInfo = async () => {
     }
     videoArr.value = arrformat;
   }
+};
+
+// 视频盒子点击事件
+const videoBoxHandler = async (vid: number) => {
+  $router.push({ path: '/video', query: { videoId: vid } });
 };
 </script>
 
