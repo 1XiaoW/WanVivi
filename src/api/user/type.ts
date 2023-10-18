@@ -17,11 +17,26 @@ export interface UserInfo {
   avatar: string;
 }
 
-// 登录接口返回的数据类型
+// 登录请求返回的数据类型
 export interface UserLoginResponseData extends ResponseData {
   data: UserInfo;
 }
 
 /**
- * 注册接口返回的数据类型就是ResponseData
+ * 注册请求返回的数据类型就是ResponseData
  */
+
+// 获取用户信息返回数据类型
+export interface UserDetail {
+  id: number;
+  username: string;
+  user_pic: string;
+  reg_date: string;
+  nickname: string;
+  email: string;
+}
+
+// 用户信息请求接口返回数据类型
+export interface UserDetailResponseData extends ResponseData {
+  data: UserDetail[];
+}

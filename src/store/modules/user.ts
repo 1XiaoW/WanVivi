@@ -2,6 +2,7 @@
 import { defineStore } from 'pinia';
 
 import { reqUserLogin } from '@/api/user';
+import { DataParameter } from '@/api/user/type';
 
 import { GET_TOKEN, SET_TOKEN, REMOVE_TOKEN } from '@/utils/user';
 const useUserStore = defineStore('User', {
@@ -14,7 +15,7 @@ const useUserStore = defineStore('User', {
   },
   actions: {
     // 用户登录方法
-    async userLogin(dataParam: any) {
+    async userLogin(dataParam: DataParameter) {
       //登录请求
       let result = await reqUserLogin(dataParam);
       console.log(result);
@@ -32,9 +33,18 @@ const useUserStore = defineStore('User', {
     //退出登录的方法
     async logout() {
       //清空仓库的数据
-      this.userInfo = { name: '', token: '' };
+      this.userInfo = { name: '', token: '', userId: '', avatar: '' };
       //清空本地存储的数据
       REMOVE_TOKEN();
+    },
+
+    // 更新用户信息方法
+    async updateUserInfo(userInfo: any) {
+      if (userInfo) {
+        REMOVE_TOKEN();
+        this.userInfo = { ...this.userInfo, avatar: userInfo };
+        SET_TOKEN(JSON.stringify(this.userInfo));
+      }
     },
   },
 });

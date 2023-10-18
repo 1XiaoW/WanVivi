@@ -4,6 +4,8 @@ import { createApp } from 'vue';
 import '@/style/reset.scss';
 // 引入鸿蒙字体
 import '@/style/regular.css';
+// 引入全局样式
+import '@/style/index.scss';
 // 引入根组件App
 import App from './App.vue';
 

@@ -18,7 +18,7 @@
     <div :class="{ top_nav: true, top_nav_fixed: isFixed }">
       <div class="left">
         <ul>
-          <li>
+          <li @click="$router.push('/')">
             <svg
               t="1693643620812"
               class="icon"
@@ -80,7 +80,9 @@
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item>个人中心</el-dropdown-item>
+                    <el-dropdown-item @click="$router.push('/userInfo')"
+                      >个人中心</el-dropdown-item
+                    >
                     <el-dropdown-item @click="logout"
                       >退出登录</el-dropdown-item
                     >
