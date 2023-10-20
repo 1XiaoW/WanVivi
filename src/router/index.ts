@@ -19,7 +19,7 @@ export default createRouter({
     },
     {
       path: '/userInfo',
-      component: () => import('@/pages/user/userinfo.vue'),
+      component: () => import('@/pages/user/userInfo.vue'),
     },
     {
       path: '/',
