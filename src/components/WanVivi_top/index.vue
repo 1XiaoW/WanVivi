@@ -70,10 +70,13 @@
       <div class="right">
         <ul>
           <li>
-            <!-- <div class="avatar" @click="login">
-              <img :src="server_url + userStore.userInfo.avatar" alt="" />
-            </div> -->
-            <div>
+            <div
+              style="
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+              ">
               <el-dropdown v-if="userStore.isLogin">
                 <span class="avatar">
                   <img :src="server_url + userStore.userInfo.avatar" alt="" />
