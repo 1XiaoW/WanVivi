@@ -13,13 +13,13 @@ enum API {
   // 用户注册接口
   USERREGISTER_URL = '/user/reguser',
   // 用户信息接口GET
-  USERINFO_URL = '/user/userInfo/',
+  USERINFO_URL = '/user/auth/userInfo/',
   // 修改用户信息接口PUT
-  MODIFYUSERINFO_URL = '/user/userInfo/',
+  MODIFYUSERINFO_URL = '/user/auth/userInfo/',
   // 修改用户头像接口
-  MODIFYAVATAR_URL = '/user/userAvatar/',
+  MODIFYAVATAR_URL = '/user/auth/userAvatar/',
   // 修改用户密码接口
-  MODIFYPASSWORD_URL = '/user/userPwd/',
+  MODIFYPASSWORD_URL = '/user/auth/userPwd/',
 }
 
 export const reqUserLogin = (data: DataParameter) =>

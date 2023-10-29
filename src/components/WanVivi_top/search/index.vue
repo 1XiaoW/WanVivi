@@ -54,7 +54,6 @@
   margin: 0 auto;
   min-width: 188px;
   max-width: 500px;
-  flex: 1;
   display: flex;
   background-color: #ebf4f7;
   border-radius: 6px;

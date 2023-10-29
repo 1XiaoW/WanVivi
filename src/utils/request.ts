@@ -4,6 +4,7 @@ import axios from 'axios';
 import useUserStore from '@/store/modules/user';
 // @ts-ignore
 import { ElMessage } from 'element-plus';
+import { REMOVE_TOKEN } from './user';
 
 // 利用axios.create方法创建一个axios实例：可以设置基础路径、超时时间
 const request = axios.create({
@@ -17,7 +18,7 @@ request.interceptors.request.use(config => {
   let userStore = useUserStore();
   // token：公共参数，如果用户登录了要携带
   if (userStore.userInfo.token) {
-    config.headers.token = userStore.userInfo.token;
+    config.headers.Authorization = userStore.userInfo.token;
   }
   // 一定要将config返回出去不然会卡在这里
   return config;
@@ -33,6 +34,13 @@ request.interceptors.response.use(
     // 处理http网络错误
     let status = error.response?.status;
     switch (status) {
+      case 401:
+        REMOVE_TOKEN();
+        ElMessage({
+          type: 'error',
+          message: '用户身份已过期，请重新登录',
+        });
+        break;
       case 404:
         //错误提示信息
         ElMessage({

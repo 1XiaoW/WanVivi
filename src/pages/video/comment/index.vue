@@ -3,13 +3,9 @@
     <div class="comment_top"><span>评论</span> <span>4396</span></div>
     <div class="comment_scroll" style="overflow: auto">
       <ul>
-        <li class="list-item" v-for="(item, index) in list" :key="index">
+        <li class="list-item" v-for="(item, index) in cList" :key="index">
           <div class="list_top">
-            <i
-              class="avatar"
-              :style="{
-                backgroundImage: `url(${server_url}${item.user_pic})`,
-              }"></i>
+            <img class="avatar" :src="server_url + item.user_pic" alt="" />
             <div class="author">
               <div class="author_left">
                 {{ item.nickname ? item.nickname : item.username }}
@@ -18,9 +14,11 @@
             </div>
           </div>
           <div class="list_bottom">
-            <p class="content">
+            <div class="content">
               {{ item.content }}
-            </p>
+              <div class="content_time">{{ item.pubdate }}</div>
+              <Reply :vId="vId" :comId="item.com_id" />
+            </div>
           </div>
         </li>
       </ul>
@@ -31,7 +29,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, reactive } from 'vue';
+import Reply from './reply/index.vue';
+import { onMounted, ref, reactive, onBeforeUnmount } from 'vue';
 import type {
   CommentsResultContent,
   CommentsResponseData,
@@ -42,52 +41,63 @@ const server_url = import.meta.env.VITE_SERVER_URL;
 let props = defineProps(['vId']);
 
 let loading = ref<boolean>(false);
-let list = reactive<CommentsResultContent>([]);
+let cList = reactive<CommentsResultContent>([]);
 let offset = ref<number>(1);
 let limit = ref<number>(2);
 let vId = ref(props.vId);
+
 onMounted(() => {
   pageY();
 });
 
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', lazyLoad);
+});
+
 const pageY = () => {
-  window.addEventListener('scroll', async function () {
-    // 获取页面高度
-    var pageHeight = document.documentElement.scrollHeight;
-    // 获取视口高度
-    var viewportHeight = window.innerHeight;
-    // 获取滚动条的垂直位置
-    var scrollPosition = window.scrollY || document.documentElement.scrollTop;
-    // 判断是否接近页面底部
-    var isBottomReached = scrollPosition + viewportHeight >= pageHeight; // 20为阈值，可根据需要调整
-    console.log(isBottomReached);
-    if (isBottomReached) {
-      // 滚动条快到底部了
-      console.log('object');
-      /**
-       * 请求数据
-       * 判断有无数据
-       * 有数据写入
-       * 无数据loading为false
-       */
-      let res: CommentsResponseData = await reqVideoComment(
-        'v',
-        vId.value,
-        offset.value,
-        limit.value
-      );
-      console.log(res.data);
-      if (res.data?.result.length > 0) {
-        loading.value = true;
-        let timer = setTimeout(() => {
-          clearTimeout(timer);
-          offset.value++;
-          list = [...list, ...res.data.result];
-          loading.value = false;
-        }, 2000);
-      } else console.log('s');
+  window.addEventListener('scroll', lazyLoad);
+};
+
+const lazyLoad = async () => {
+  if (loading.value !== false) return;
+  // 获取整个文档的高度，包括未显示内容的高度
+  const fullHeight = document.documentElement.scrollHeight;
+  // 获取浏览器窗口的可视区域高度
+  const viewportHeight = window.innerHeight;
+  // 获取滚动条垂直位置
+  const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+
+  // 计算剩余未滚动的距离
+  const remainingDistance = fullHeight - viewportHeight - scrollPosition;
+  console.log(fullHeight, viewportHeight, scrollPosition);
+  if (remainingDistance <= 1) {
+    // 滚动条快到底部了
+    loading.value = true;
+    /**
+     * 请求数据
+     * 判断有无数据
+     * 有数据写入
+     * 无数据loading为false
+     */
+    await new Promise(t => {
+      setTimeout(() => {
+        t(1);
+      }, 2000);
+    });
+    let res: CommentsResponseData = await reqVideoComment(
+      'v',
+      vId.value,
+      offset.value,
+      limit.value
+    );
+    if (res.data?.result.length > 0) {
+      offset.value++;
+      cList = [...cList, ...res.data.result];
+      loading.value = false;
+    } else {
+      loading.value = false;
     }
-  });
+  }
 };
 </script>
 
@@ -125,14 +135,10 @@ const pageY = () => {
       .list_top {
         display: flex;
         .avatar {
-          display: block;
           width: 40px;
           height: 40px;
           border-radius: 50%;
           margin-right: 20px;
-          background-repeat: no-repeat;
-          background-position: center;
-          background-size: cover;
         }
         .author {
           margin-top: 5px;
@@ -155,6 +161,7 @@ const pageY = () => {
           line-height: 24px;
           padding-bottom: 20px;
           border-bottom: 1px solid #ccc;
+          word-break: break-all;
           overflow: hidden;
         }
       }

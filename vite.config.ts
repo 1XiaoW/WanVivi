@@ -12,6 +12,7 @@ export default defineConfig({
   },
   // 配置代理跨域
   server: {
+    host: '0.0.0.0',
     proxy: {
       '/api': {
         target: 'http://localhost:5051',

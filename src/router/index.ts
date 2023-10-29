@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 
-export default createRouter({
+const router = createRouter({
   // 路由的模式设置
   history: createWebHashHistory(),
   // 管理路由
@@ -27,3 +27,10 @@ export default createRouter({
     },
   ],
 });
+
+router.beforeEach((to: any, from: any, next: any) => {
+  //判断该用户有没有登录过
+  next();
+});
+
+export default router;

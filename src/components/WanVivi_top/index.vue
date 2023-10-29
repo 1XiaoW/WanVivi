@@ -113,7 +113,11 @@
           <li>
             <el-icon size="18"><Search /></el-icon>创作中心
           </li>
-          <el-button size="default" type="danger" :icon="Upload"
+          <el-button
+            size="default"
+            type="danger"
+            :icon="Upload"
+            @click="$router.push('/submit')"
             >投稿</el-button
           >
         </ul>
@@ -184,68 +188,69 @@ const getWindowY = () => {
 <style lang="scss" scoped>
 .top {
   position: relative;
-}
-.top_nav {
-  position: absolute;
-  top: 0;
-  z-index: 100;
-  text-align: left;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  color: white;
-  justify-content: space-between;
-  padding: 0 24px;
-  max-width: 2560px;
-  min-width: 1124px;
-  width: 100%;
-  height: 64px;
-  ::v-deep(.el-icon) {
-    vertical-align: bottom;
-  }
-  .left {
-    ul {
-      display: flex;
-      li {
-        height: 30px;
-        line-height: 30px;
-        cursor: pointer;
-        margin: 0 7px;
-        &:hover {
-          animation: bounce 0.3s linear;
-        }
-        svg {
-          vertical-align: middle;
+  min-width: 1418px;
+  .top_nav {
+    position: absolute;
+    top: 0;
+    z-index: 100;
+    text-align: left;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    color: white;
+    justify-content: space-between;
+    padding: 0 24px;
+    width: 100%;
+    height: 64px;
+    ::v-deep(.el-icon) {
+      vertical-align: bottom;
+    }
+    .left {
+      ul {
+        min-width: 461px;
+        display: flex;
+        li {
+          height: 30px;
+          line-height: 30px;
+          cursor: pointer;
+          margin: 0 7px;
+          &:hover {
+            animation: bounce 0.3s linear;
+          }
+          svg {
+            vertical-align: middle;
+          }
         }
       }
     }
-  }
-  .middle {
-    flex: 1;
-  }
-  .right {
-    ul {
-      display: flex;
-      li {
-        cursor: pointer;
-        &:hover {
-          ::v-deep(.el-icon) {
-            animation: bounce 0.3s linear;
-          }
-        }
-        .avatar img {
-          width: 40px;
-          height: 40px;
-          background-color: #ccc;
-          border-radius: 50%;
-        }
-        ::v-deep(.el-icon) {
-          margin-bottom: 5px;
-        }
+    .middle {
+      flex: 1;
+    }
+    .right {
+      ul {
+        min-width: 416px;
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin: 0 7px;
+        li {
+          cursor: pointer;
+          &:hover {
+            ::v-deep(.el-icon) {
+              animation: bounce 0.3s linear;
+            }
+          }
+          .avatar img {
+            width: 40px;
+            height: 40px;
+            background-color: #ccc;
+            border-radius: 50%;
+          }
+          ::v-deep(.el-icon) {
+            margin-bottom: 5px;
+          }
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          margin: 0 7px;
+        }
       }
     }
   }
@@ -257,7 +262,6 @@ const getWindowY = () => {
 }
 .top_banner {
   position: relative;
-  min-width: 1124px;
   top: 0;
   .vidContainer {
     width: 100%;

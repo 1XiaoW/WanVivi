@@ -9,7 +9,7 @@ import {
 // 通过枚举管理视频模块接口的地址
 enum API {
   VIDEO_URL = '/video/channel/',
-  VIDEO_COMMENTS_URL = '/video/comment',
+  VIDEO_COMMENTS_URL = '/video/comment/',
   VIDEOBYID = '/video/',
   VIDEOSUBMIT_URL = '/video/upload',
 }
@@ -27,10 +27,12 @@ export const reqVideoComment = (
   type: string,
   source: number,
   offset: number = 1,
-  limit: number = 5
+  limit: number = 5,
+  com_id?: number
 ) =>
   request.get<any, CommentsResponseData>(
     API.VIDEO_COMMENTS_URL +
+      com_id +
       `?type=${type}&source=${source}&offset=${offset}&limit=${limit}`
   );
 

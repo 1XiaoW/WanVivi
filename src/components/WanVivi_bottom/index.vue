@@ -31,6 +31,7 @@
 
 <style lang="scss" scoped>
 .footer {
+  min-width: 1418px;
   height: 120px;
   display: flex;
   .introduction {

@@ -120,7 +120,9 @@ import { reqVideoById } from '@/api/video/index.ts';
 import { useRoute } from 'vue-router';
 import { VideoInfoResponseData, VideoInfo } from '@/api/video/type.ts';
 import { pNumHandler } from '@/utils/dataProcessing.ts';
+
 const server_url = import.meta.env.VITE_SERVER_URL;
+
 let $route = useRoute();
 let vId = Number($route.query.videoId);
 let vInfo = ref<VideoInfo>({
@@ -168,6 +170,7 @@ const videoUpload = computed(() => {
 <style lang="scss" scoped>
 .video_container {
   .video_title {
+    width: 668px;
     h1 {
       font-size: 20px;
       font-family: HarmonyOS_Regular, Helvetica Neue, Microsoft YaHei,
@@ -177,6 +180,7 @@ const videoUpload = computed(() => {
       color: #18191c;
       line-height: 28px;
       margin-bottom: 6px;
+      text-align: center;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;

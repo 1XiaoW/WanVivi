@@ -226,11 +226,11 @@ const videoBoxHandler = async (vid: number) => {
   }
 }
 
-@media screen and (max-width: 1199px) {
-  .container {
-    .top {
-      width: 1124px;
-    }
-  }
-}
+// @media screen and (max-width: 1199px) {
+//   .container {
+//     .top {
+//       width: 1124px;
+//     }
+//   }
+// }
 </style>

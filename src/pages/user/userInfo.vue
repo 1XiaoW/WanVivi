@@ -118,22 +118,15 @@ onMounted(() => {
 });
 
 const getUserDetail = async () => {
-  try {
-    const res = await reqUserInfo(userId);
-    if (res.status === 200) {
-      userInfo.name = res.data[0].username;
-      userInfo.nickname = res.data[0].nickname;
-      userInfo.email = res.data[0].email;
-    } else {
-      return ElMessage({
-        type: 'error',
-        message: '请求用户信息失败',
-      });
-    }
-  } catch (error: any) {
+  const res = await reqUserInfo(userId);
+  if (res.status === 200) {
+    userInfo.name = res.data[0].username;
+    userInfo.nickname = res.data[0].nickname;
+    userInfo.email = res.data[0].email;
+  } else {
     return ElMessage({
       type: 'error',
-      message: error.message,
+      message: '请求用户信息失败',
     });
   }
 };

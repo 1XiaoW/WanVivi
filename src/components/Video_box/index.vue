@@ -12,9 +12,7 @@
         <div class="right">{{ timeHandler(props.videoInfo.duration) }}</div>
       </div>
     </div>
-    <div class="video_title">
-      {{ videoInfo.title }}
-    </div>
+    <div class="video_title">{{ videoInfo.title }}</div>
     <div class="video_author">
       <svg
         t="1693637882159"
@@ -99,6 +97,7 @@ let props = defineProps(['videoInfo']);
     margin: 6px 0;
     line-height: 22px;
     font-size: 15px;
+    height: 44px;
     overflow: hidden; //超出文本隐藏
     text-overflow: ellipsis; ///超出部分省略号显示
     display: -webkit-box; //弹性盒模型

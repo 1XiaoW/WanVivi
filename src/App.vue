@@ -3,7 +3,7 @@
     <!-- 顶部全局组件 -->
     <WanViviTop />
     <!-- 展示路由组件区域 -->
-    <div class="content scaled-content">
+    <div class="content">
       <router-view></router-view>
     </div>
     <!-- 底部全局组件 -->
@@ -11,7 +11,21 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+// @ts-ignore
+import autofit from './utils/autofit.js';
+import { onMounted } from 'vue';
+import { GET_TOKEN, REMOVE_TOKEN } from './utils/user';
+import request from '@/utils/request';
+onMounted(async () => {
+  if (GET_TOKEN()) {
+    const res = await request.get('/auth');
+    if (res.status === 200) return;
+    else REMOVE_TOKEN();
+  }
+  // autofit.init({ dh: 768, dw: 1366, el: '#app', resize: true });
+});
+</script>
 
 <style lang="scss" scoped>
 .container {
@@ -30,11 +44,5 @@
     //   align-items: center;
     // }
   }
-  // @media (max-width: 800px) {
-  //   .scaled-content {
-  //     transform: scale(0.8);
-  //     transform-origin: center;
-  //   }
-  // }
 }
 </style>
