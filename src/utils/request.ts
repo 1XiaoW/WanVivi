@@ -13,7 +13,7 @@ const request = axios.create({
 });
 
 // 请求拦截器
-request.interceptors.request.use(config => {
+request.interceptors.request.use((config) => {
   // 获取用户仓库
   let userStore = useUserStore();
   // token：公共参数，如果用户登录了要携带
@@ -26,16 +26,19 @@ request.interceptors.request.use(config => {
 
 // 响应拦截器
 request.interceptors.response.use(
-  response => {
+  (response) => {
     // 因为axios返回数据会套一层data，不想那么多data嵌套直接返回response.data
     return response.data;
   },
-  error => {
+  (error) => {
+    // 获取用户仓库
+    let userStore = useUserStore();
     // 处理http网络错误
     let status = error.response?.status;
     switch (status) {
       case 401:
         REMOVE_TOKEN();
+        userStore.isLogin = false;
         ElMessage({
           type: 'error',
           message: '用户身份已过期，请重新登录',

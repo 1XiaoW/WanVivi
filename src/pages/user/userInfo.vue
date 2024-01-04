@@ -1,97 +1,6 @@
-<template>
-  <div class="container">
-    <el-card class="box-card">
-      <template #header>
-        <div class="card-header">
-          <span>个人中心</span>
-        </div>
-      </template>
-      <el-tabs tab-position="left" v-model="activeName" class="demo-tabs">
-        <el-tab-pane name="first">
-          <template #label>
-            <span class="custom-tabs-label">
-              <el-icon><User /></el-icon>
-              <span>我的信息</span>
-            </span>
-          </template>
-          <el-form
-            ref="form"
-            :model="userInfo"
-            label-width="auto"
-            label-position="left"
-            size="default">
-            <el-form-item label="用户名">
-              <el-input :value="userInfo.name" disabled />
-            </el-form-item>
-            <el-form-item label="昵称">
-              <el-input v-model="userInfo.nickname" />
-            </el-form-item>
-            <el-form-item label="邮箱">
-              <el-input v-model="userInfo.email" />
-            </el-form-item>
-
-            <el-form-item class="save">
-              <el-button type="primary" @click="onModifyUserInfo"
-                >保存</el-button
-              >
-            </el-form-item>
-          </el-form>
-        </el-tab-pane>
-        <el-tab-pane name="second">
-          <template #label>
-            <span class="custom-tabs-label">
-              <el-icon><Avatar /></el-icon>
-              <span>我的头像</span>
-            </span>
-          </template>
-          <el-upload
-            class="avatar-uploader"
-            action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-            :show-file-list="false"
-            :auto-upload="false"
-            :on-change="beforeAvatarUpload">
-            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-          </el-upload>
-          <el-button type="primary" @click="updateAvatar">更新</el-button>
-        </el-tab-pane>
-        <el-tab-pane name="third">
-          <template #label>
-            <span class="custom-tabs-label">
-              <el-icon><Lock /></el-icon>
-              <span>修改密码</span>
-            </span>
-          </template>
-          <el-form
-            ref="pwdFormRef"
-            :model="userPwd"
-            label-width="auto"
-            label-position="left"
-            :rules="passwordRules"
-            size="default">
-            <el-form-item label="原密码" prop="originPwd">
-              <el-input v-model="userPwd.originPwd" />
-            </el-form-item>
-            <el-form-item label="新密码" prop="newPwd">
-              <el-input v-model="userPwd.newPwd" />
-            </el-form-item>
-            <el-form-item label="确认密码" prop="confirmPwd">
-              <el-input v-model="userPwd.confirmPwd" />
-            </el-form-item>
-            <el-form-item class="save">
-              <el-button type="primary" @click="onModifyPwd(pwdFormRef!)"
-                >修改</el-button
-              >
-            </el-form-item>
-          </el-form>
-        </el-tab-pane>
-      </el-tabs>
-    </el-card>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { Avatar, Lock, User, Plus } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import type { FormInstance, FormRules, UploadFile } from 'element-plus';
@@ -102,6 +11,9 @@ import {
   reqModifyPassword,
   reqModifyAvatar,
 } from '@/api/user';
+
+const $router = useRouter();
+
 const server_url = import.meta.env.VITE_SERVER_URL;
 
 let userStore = useUserStore();
@@ -169,7 +81,7 @@ const updateAvatar = async () => {
   if (files.value) {
     let formData = new FormData();
     formData.append('file', files.value);
-    let result: any = await reqModifyAvatar(userId, formData);
+    let result = await reqModifyAvatar(userId, formData);
     console.log(result);
     if (result.status === 200) {
       userStore.updateUserInfo(result.fileUrl);
@@ -198,7 +110,7 @@ const onModifyPwd = async (pwdFormRef: FormInstance) => {
     console.log(error.message);
   }
 };
-
+//@ts-ignore
 // 密码输入框校验
 const validatePass = (rule: any, value: any, callback: any) => {
   if (value === '') {
@@ -213,6 +125,7 @@ const validatePass = (rule: any, value: any, callback: any) => {
     callback();
   }
 };
+//@ts-ignore
 const validatePass2 = (rule: any, value: any, callback: any) => {
   if (value === '') {
     callback(new Error('请再次输入新密码'));
@@ -241,7 +154,119 @@ const passwordRules = reactive<FormRules<typeof userPwd>>({
   newPwd: [{ validator: validatePass, trigger: 'blur', required: true }],
   confirmPwd: [{ validator: validatePass2, trigger: 'blur', required: true }],
 });
+
+const goUserSpace = (el: any) => {
+  let current = el.props.name;
+  // 为了打开新窗口用下面方式
+  if (current === 'four') {
+    const url = $router.resolve(`userSpace`);
+    window.open(url.href, '_blank');
+  }
+};
 </script>
+
+<template>
+  <div class="container">
+    <el-card class="box-card">
+      <template #header>
+        <div class="card-header">
+          <span>个人中心</span>
+        </div>
+      </template>
+      <el-tabs
+        tab-position="left"
+        v-model="activeName"
+        class="demo-tabs"
+        @tab-click="goUserSpace">
+        <el-tab-pane name="first">
+          <template #label>
+            <span class="custom-tabs-label">
+              <el-icon><User /></el-icon>
+              <span>我的信息</span>
+            </span>
+          </template>
+          <el-form
+            ref="form"
+            :model="userInfo"
+            label-width="auto"
+            label-position="left"
+            size="default">
+            <el-form-item label="用户名:">
+              {{ userInfo.name }}
+            </el-form-item>
+            <el-form-item label="昵称">
+              <el-input v-model="userInfo.nickname" />
+            </el-form-item>
+            <el-form-item label="邮箱">
+              <el-input v-model="userInfo.email" />
+            </el-form-item>
+
+            <el-form-item class="save">
+              <el-button type="primary" @click="onModifyUserInfo"
+                >保存</el-button
+              >
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane name="second">
+          <template #label>
+            <span class="custom-tabs-label">
+              <el-icon><Avatar /></el-icon>
+              <span>我的头像</span>
+            </span>
+          </template>
+          <el-upload
+            class="avatar-uploader"
+            :show-file-list="false"
+            :auto-upload="false"
+            :on-change="beforeAvatarUpload">
+            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+          </el-upload>
+          <el-button type="primary" @click="updateAvatar">更新</el-button>
+        </el-tab-pane>
+        <el-tab-pane name="third">
+          <template #label>
+            <span class="custom-tabs-label">
+              <el-icon><Lock /></el-icon>
+              <span>修改密码</span>
+            </span>
+          </template>
+          <el-form
+            ref="pwdFormRef"
+            :model="userPwd"
+            label-width="auto"
+            label-position="left"
+            :rules="passwordRules"
+            size="default">
+            <el-form-item label="原密码" prop="originPwd">
+              <el-input v-model="userPwd.originPwd" />
+            </el-form-item>
+            <el-form-item label="新密码" prop="newPwd">
+              <el-input v-model="userPwd.newPwd" />
+            </el-form-item>
+            <el-form-item label="确认密码" prop="confirmPwd">
+              <el-input v-model="userPwd.confirmPwd" />
+            </el-form-item>
+            <el-form-item class="save">
+              <el-button type="primary" @click="onModifyPwd(pwdFormRef!)"
+                >修改</el-button
+              >
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane name="four">
+          <template #label @click="goUserSpace">
+            <span class="custom-tabs-label">
+              <el-icon><Lock /></el-icon>
+              <span>个人空间</span>
+            </span>
+          </template>
+        </el-tab-pane>
+      </el-tabs>
+    </el-card>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .container {
@@ -249,7 +274,7 @@ const passwordRules = reactive<FormRules<typeof userPwd>>({
   justify-content: center;
 
   .box-card {
-    width: 50%;
+    width: 75%;
     margin-top: 100px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.14);
     .card-header {
@@ -266,20 +291,18 @@ const passwordRules = reactive<FormRules<typeof userPwd>>({
       margin-bottom: 18px;
     }
 
-    .box-card {
-      width: 480px;
-    }
-
     .demo-tabs {
       & > :deep(.el-tabs__content) {
+        display: flex;
+        justify-content: center;
         padding: 32px;
         color: #6b778c;
         font-size: 32px;
         font-weight: 600;
       }
       .avatar-uploader .avatar {
-        width: 178px;
-        height: 178px;
+        width: 160px;
+        height: 160px;
         display: block;
       }
     }

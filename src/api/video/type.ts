@@ -41,6 +41,7 @@ export interface VideoInfo {
   author_id: number;
   channel_id: number;
   brief: string;
+  flag?: string;
 }
 
 // 评论result里的数据
@@ -83,4 +84,14 @@ export interface VideoInfoResponseData extends ResponseData {
 // 评论接口返回的ts数据类型
 export interface CommentsResponseData extends ResponseData {
   data: Comments;
+}
+
+// 获取用户对视频是否点赞和收藏返回的ts类型
+export interface LikeAndCollect {
+  like: boolean;
+  collect: boolean;
+}
+
+export interface LikeAndCollectResponseData extends ResponseData {
+  data: LikeAndCollect;
 }

@@ -1,3 +1,61 @@
+<script setup lang="ts">
+//@ts-ignore
+import { VideoCamera, Download, Search, Upload } from '@element-plus/icons-vue';
+import { ref, onMounted } from 'vue';
+//获取user仓库的数据（visiable）可以控制login组件的对话框显示与隐藏
+import useUserStore from '@/store/modules/user';
+//@ts-ignore
+import search from './search/index.vue';
+let userStore = useUserStore();
+let server_url = import.meta.env.VITE_SERVER_URL;
+
+let vidRef = ref();
+let x: number = 0;
+let _x = null;
+let isFixed = ref<boolean>(false);
+
+onMounted(() => {
+  document.addEventListener('scroll', getWindowY);
+});
+
+//点击登录与注册按钮的时候弹出对话框
+const login = () => {
+  userStore.visible = true;
+};
+
+//退出登录的回调
+const logout = () => {
+  //通知pinia仓库清除用户相关的信息
+  userStore.logout();
+  userStore.isLogin = false;
+};
+
+const handleMouseEnter = (e: MouseEvent) => {
+  x = e.clientX;
+  vidRef.value.style.transition = 'none';
+};
+
+const handleMouseMove = (e: MouseEvent) => {
+  _x = e.clientX;
+  const disx = _x - x;
+  const move = 0 - disx / -30;
+  vidRef.value.style.transform = `translate(${move}px, 0px)`;
+};
+
+const handleMouseLeave = () => {
+  vidRef.value.style.transition = '.3s ';
+  vidRef.value.style.transform = 'translate(0,0)';
+};
+
+const getWindowY = () => {
+  if (window.scrollY > 64) {
+    isFixed.value = true;
+  } else {
+    isFixed.value = false;
+  }
+};
+</script>
+
 <template>
   <div class="top">
     <div class="top_banner">
@@ -18,7 +76,7 @@
     <div :class="{ top_nav: true, top_nav_fixed: isFixed }">
       <div class="left">
         <ul>
-          <li @click="$router.push('/')">
+          <li @click="$router.push('/home')">
             <svg
               t="1693643620812"
               class="icon"
@@ -127,68 +185,27 @@
   <Login_Register></Login_Register>
 </template>
 
-<script setup lang="ts">
-//@ts-ignore
-import { VideoCamera, Download, Search, Upload } from '@element-plus/icons-vue';
-import { ref, onMounted } from 'vue';
-//获取user仓库的数据（visiable）可以控制login组件的对话框显示与隐藏
-import useUserStore from '@/store/modules/user';
-//@ts-ignore
-import search from './search/index.vue';
-let userStore = useUserStore();
-let server_url = import.meta.env.VITE_SERVER_URL;
-
-let vidRef = ref();
-let x: number = 0;
-let _x = null;
-let isFixed = ref<boolean>(false);
-
-onMounted(() => {
-  document.addEventListener('scroll', getWindowY);
-});
-
-//点击登录与注册按钮的时候弹出对话框
-const login = () => {
-  userStore.visible = true;
-};
-
-//退出登录的回调
-const logout = () => {
-  //通知pinia仓库清除用户相关的信息
-  userStore.logout();
-  userStore.isLogin = false;
-};
-
-const handleMouseEnter = (e: MouseEvent) => {
-  x = e.clientX;
-  vidRef.value.style.transition = 'none';
-};
-
-const handleMouseMove = (e: MouseEvent) => {
-  _x = e.clientX;
-  const disx = _x - x;
-  const move = 0 - disx / -30;
-  vidRef.value.style.transform = `translate(${move}px, 0px)`;
-};
-
-const handleMouseLeave = () => {
-  vidRef.value.style.transition = '.3s ';
-  vidRef.value.style.transform = 'translate(0,0)';
-};
-
-const getWindowY = () => {
-  if (window.scrollY > 64) {
-    isFixed.value = true;
-  } else {
-    isFixed.value = false;
-  }
-};
-</script>
-
 <style lang="scss" scoped>
 .top {
   position: relative;
   min-width: 1418px;
+  .top_banner {
+    position: relative;
+    top: 0;
+    .vidContainer {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .vid {
+      position: relative;
+      width: 120%;
+      height: 100%;
+      transition: all 0.8s;
+    }
+  }
   .top_nav {
     position: absolute;
     top: 0;
@@ -254,29 +271,13 @@ const getWindowY = () => {
       }
     }
   }
-}
-.top_nav_fixed {
-  position: fixed;
-  color: black;
-  background-color: #fff;
-}
-.top_banner {
-  position: relative;
-  top: 0;
-  .vidContainer {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    overflow: hidden;
+  .top_nav_fixed {
+    position: fixed;
+    color: black;
+    background-color: #fff;
   }
+}
 
-  .vid {
-    position: relative;
-    width: 120%;
-    height: 100%;
-    transition: all 0.8s;
-  }
-}
 /* 定义动画关键帧 */
 @keyframes bounce {
   0% {

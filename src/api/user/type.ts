@@ -12,7 +12,8 @@ export interface DataParameter {
 
 // 登录接口返回的数据类型
 export interface UserInfo {
-  name: string;
+  userId: number;
+  username: string;
   token: string;
   avatar: string;
 }
@@ -39,4 +40,9 @@ export interface UserDetail {
 // 用户信息请求接口返回数据类型
 export interface UserDetailResponseData extends ResponseData {
   data: UserDetail[];
+}
+
+// 修改用户头像接口返回数据类型
+export interface ModifyUserAvatarResponseData extends ResponseData {
+  fileUrl: string;
 }

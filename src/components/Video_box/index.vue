@@ -1,5 +1,45 @@
+<script setup lang="ts">
+import { VideoCamera, Postcard } from '@element-plus/icons-vue';
+import { pNumHandler, timeHandler, timeAgo } from '@/utils/dataProcessing.ts';
+const server_url = import.meta.env.VITE_SERVER_URL;
+
+// import { onMounted } from 'vue';
+// 接受父组件传递过来的props->即为已有的视频的数据
+let props = defineProps(['videoInfo']);
+// onMounted(() => {
+//   console.log(props.videoInfo);
+// });
+</script>
+
 <template>
-  <div class="video_box">
+  <div
+    class="video_box"
+    v-if="videoInfo.flag"
+    style="width: 180px; height: 185px">
+    <div class="video_img" style="height: 100px">
+      <img :src="server_url + videoInfo.video_cover" alt="" />
+      <div class="video_info">
+        <div class="left"></div>
+        <div class="right-bg">{{ timeHandler(props.videoInfo.duration) }}</div>
+      </div>
+    </div>
+    <div class="video_title" style="font-size: 12px; height: 40px">
+      {{ videoInfo.title }}
+    </div>
+    <div
+      class="video_author"
+      style="display: flex; justify-content: space-between">
+      <div class="play_count" v-if="videoInfo.flag != 'userStar'">
+        <el-icon style="vertical-align: bottom"><VideoCamera /></el-icon>
+        {{ pNumHandler(props.videoInfo.view_count) }}
+      </div>
+      <span class="time">
+        {{ videoInfo.flag != 'userStar' ? '' : '收藏于：'
+        }}{{ timeAgo(props.videoInfo.upload_date) }}
+      </span>
+    </div>
+  </div>
+  <div class="video_box" v-else>
     <div class="video_img">
       <img :src="server_url + videoInfo.video_cover" alt="" />
       <div class="video_info">
@@ -40,19 +80,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { VideoCamera, Postcard } from '@element-plus/icons-vue';
-import { pNumHandler, timeHandler, timeAgo } from '@/utils/dataProcessing.ts';
-const server_url = import.meta.env.VITE_SERVER_URL;
-
-// import { onMounted } from 'vue';
-// 接受父组件传递过来的props->即为已有的视频的数据
-let props = defineProps(['videoInfo']);
-// onMounted(() => {
-//   console.log(props.videoInfo);
-// });
-</script>
-
 <style lang="scss" scoped>
 .video_box {
   width: 264px;
@@ -75,7 +102,6 @@ let props = defineProps(['videoInfo']);
       border-radius: 5px;
     }
   }
-
   .video_info {
     display: flex;
     position: absolute;
@@ -91,6 +117,12 @@ let props = defineProps(['videoInfo']);
       ::v-deep(.el-icon) {
         vertical-align: bottom;
       }
+    }
+    .right-bg {
+      padding: 4px;
+      font-size: 12px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 4px;
     }
   }
   .video_title {
@@ -120,6 +152,11 @@ let props = defineProps(['videoInfo']);
     }
     i {
       margin: 0 6px;
+    }
+    .play_count {
+      i {
+        margin: 0;
+      }
     }
   }
 }

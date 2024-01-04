@@ -5,12 +5,18 @@ import { reqUserLogin } from '@/api/user';
 import { DataParameter } from '@/api/user/type';
 
 import { GET_TOKEN, SET_TOKEN, REMOVE_TOKEN } from '@/utils/user';
+type userInfo = {
+  userId: number;
+  avatar: string;
+  username: string;
+  token: string;
+};
 const useUserStore = defineStore('User', {
   state: () => {
     return {
       visible: false, // 用于控制登录注册组件的dialog显示与隐藏
       isLogin: false, // 用于控制是否为登录状态
-      userInfo: JSON.parse(GET_TOKEN() as string) || {},
+      userInfo: (JSON.parse(GET_TOKEN() as string) as userInfo) || {},
     };
   },
   actions: {

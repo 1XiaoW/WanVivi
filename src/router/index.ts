@@ -22,6 +22,29 @@ const router = createRouter({
       component: () => import('@/pages/user/userInfo.vue'),
     },
     {
+      path: '/userSpace',
+      component: () => import('@/pages/user/userSpace.vue'),
+      redirect: '/userSpace/home',
+      children: [
+        {
+          path: 'dynamic',
+          component: () => import('@/pages/user/UserDynamic/index.vue'),
+        },
+        {
+          path: 'home',
+          component: () => import('@/pages/user/UserHome/index.vue'),
+        },
+        {
+          path: 'star',
+          component: () => import('@/pages/user/UserStar/index.vue'),
+        },
+        {
+          path: 'uploads',
+          component: () => import('@/pages/user/UserUploads/index.vue'),
+        },
+      ],
+    },
+    {
       path: '/',
       redirect: 'home',
     },

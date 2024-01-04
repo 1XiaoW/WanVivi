@@ -1,6 +1,127 @@
+<script setup lang="ts">
+import Reply from './reply/index.vue';
+import { onMounted, ref, reactive, onBeforeUnmount } from 'vue';
+import type {
+  CommentsResultContent,
+  CommentsResponseData,
+} from '@/api/video/type.ts';
+import { reqVideoComment, reqVideoCommentPost } from '@/api/video/index.ts';
+import useUserStore from '@/store/modules/user';
+import { ElMessage } from 'element-plus';
+
+const useStore = useUserStore();
+const server_url = import.meta.env.VITE_SERVER_URL;
+
+const props = defineProps(['vId']);
+
+const loading = ref<boolean>(false);
+let cList = reactive<CommentsResultContent>([]);
+const cTotal = ref<number>();
+const offset = ref<number>(1);
+const limit = ref<number>(2);
+const vId = props.vId;
+const commentText = ref();
+
+onMounted(() => {
+  pageY();
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', lazyLoad);
+});
+
+const pageY = () => {
+  window.addEventListener('scroll', lazyLoad);
+};
+
+const lazyLoad = async () => {
+  if (loading.value !== false) return;
+  // 获取整个文档的高度，包括未显示内容的高度
+  const fullHeight = document.documentElement.scrollHeight;
+  // 获取浏览器窗口的可视区域高度
+  const viewportHeight = window.innerHeight;
+  // 获取滚动条垂直位置
+  const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+
+  // 计算剩余未滚动的距离
+  const remainingDistance = fullHeight - viewportHeight - scrollPosition;
+  // console.log(fullHeight, viewportHeight, scrollPosition);
+  if (remainingDistance <= 1) {
+    // 滚动条快到底部了
+    loading.value = true;
+    //  请求数据   判断有无数据   有数据写入   无数据loading为false
+    await new Promise((t) => {
+      setTimeout(() => {
+        t(1);
+      }, 2000);
+    });
+    let res: CommentsResponseData = await reqVideoComment(
+      'v',
+      vId,
+      offset.value,
+      limit.value
+    );
+    if (res.data?.result.length > 0) {
+      offset.value++;
+      cList = [...cList, ...res.data.result];
+      cTotal.value = res.data.total;
+      loading.value = false;
+    } else {
+      loading.value = false;
+    }
+  }
+};
+// 刚开始时先加载一次评论
+lazyLoad();
+
+// 发布评论
+const onPostComment = async () => {
+  let params = {
+    userId: useStore.userInfo.userId,
+    vId,
+    commentText: commentText.value,
+  };
+  const res = await reqVideoCommentPost(params);
+  if (res.status === 200) {
+    lazyLoad();
+    commentText.value = '';
+    ElMessage({
+      type: 'success',
+      message: res.message,
+    });
+  } else {
+    ElMessage({
+      type: 'error',
+      message: res.message,
+    });
+  }
+};
+</script>
+
 <template>
   <div class="video_comment">
-    <div class="comment_top"><span>评论</span> <span>4396</span></div>
+    <div class="comment_top">
+      <span>评论</span> <span>{{ cTotal }}</span>
+    </div>
+    <div class="comment_post">
+      <div class="left_avatar">
+        <el-avatar :src="server_url + useStore.userInfo.avatar" />
+      </div>
+      <div class="middle_content">
+        <el-input
+          :autosize="{ minRows: 2, maxRows: 4 }"
+          v-model="commentText"
+          size="small"
+          type="textarea"
+          resize="none"
+          placeholder="尊重是评论打动人心的入场券" />
+      </div>
+      <div class="right_post">
+        <el-button type="primary" style="height: 52px" @click="onPostComment"
+          >发布</el-button
+        >
+      </div>
+    </div>
     <div class="comment_scroll" style="overflow: auto">
       <ul>
         <li class="list-item" v-for="(item, index) in cList" :key="index">
@@ -27,79 +148,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import Reply from './reply/index.vue';
-import { onMounted, ref, reactive, onBeforeUnmount } from 'vue';
-import type {
-  CommentsResultContent,
-  CommentsResponseData,
-} from '@/api/video/type.ts';
-import { reqVideoComment } from '@/api/video/index.ts';
-const server_url = import.meta.env.VITE_SERVER_URL;
-
-let props = defineProps(['vId']);
-
-let loading = ref<boolean>(false);
-let cList = reactive<CommentsResultContent>([]);
-let offset = ref<number>(1);
-let limit = ref<number>(2);
-let vId = ref(props.vId);
-
-onMounted(() => {
-  pageY();
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener('scroll', lazyLoad);
-});
-
-const pageY = () => {
-  window.addEventListener('scroll', lazyLoad);
-};
-
-const lazyLoad = async () => {
-  if (loading.value !== false) return;
-  // 获取整个文档的高度，包括未显示内容的高度
-  const fullHeight = document.documentElement.scrollHeight;
-  // 获取浏览器窗口的可视区域高度
-  const viewportHeight = window.innerHeight;
-  // 获取滚动条垂直位置
-  const scrollPosition = window.scrollY || document.documentElement.scrollTop;
-
-  // 计算剩余未滚动的距离
-  const remainingDistance = fullHeight - viewportHeight - scrollPosition;
-  console.log(fullHeight, viewportHeight, scrollPosition);
-  if (remainingDistance <= 1) {
-    // 滚动条快到底部了
-    loading.value = true;
-    /**
-     * 请求数据
-     * 判断有无数据
-     * 有数据写入
-     * 无数据loading为false
-     */
-    await new Promise(t => {
-      setTimeout(() => {
-        t(1);
-      }, 2000);
-    });
-    let res: CommentsResponseData = await reqVideoComment(
-      'v',
-      vId.value,
-      offset.value,
-      limit.value
-    );
-    if (res.data?.result.length > 0) {
-      offset.value++;
-      cList = [...cList, ...res.data.result];
-      loading.value = false;
-    } else {
-      loading.value = false;
-    }
-  }
-};
-</script>
 
 <style lang="scss" scoped>
 .video_comment {
@@ -167,7 +215,7 @@ const lazyLoad = async () => {
       }
     }
     .list-item + .list-item {
-      margin-top: 10px;
+      margin-top: 20px;
     }
     .loading {
       width: 200px;
@@ -177,6 +225,20 @@ const lazyLoad = async () => {
       overflow: hidden;
       font-size: 13px;
       color: #9499a0;
+    }
+  }
+  .comment_post {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 20px;
+    .left_avatar {
+    }
+    .middle_content {
+      flex: 1;
+      padding: 0 10px;
+    }
+    .right_post {
     }
   }
 }

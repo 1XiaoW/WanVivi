@@ -5,6 +5,7 @@ import {
   ResponseData,
   UserLoginResponseData,
   UserDetailResponseData,
+  ModifyUserAvatarResponseData,
 } from './type.ts';
 // 枚举接口地址
 enum API {
@@ -31,9 +32,14 @@ export const reqUserRegister = (data: DataParameter) =>
 export const reqUserInfo = (id: number = -1) =>
   request.get<any, UserDetailResponseData>(API.USERINFO_URL + id);
 
-export const reqModifyUserInfo = (id: any, data: any) =>
-  request.put<any>(API.MODIFYUSERINFO_URL + id, data);
-export const reqModifyAvatar = (id: any, formData: any) =>
-  request.put<any>(API.MODIFYAVATAR_URL + id, formData);
-export const reqModifyPassword = (id: any, pwd: any) =>
-  request.put<any>(API.MODIFYPASSWORD_URL + id, pwd);
+export const reqModifyUserInfo = (id: number, data: object) =>
+  request.put<any, ResponseData>(API.MODIFYUSERINFO_URL + id, data);
+
+export const reqModifyAvatar = (id: number, formData: FormData) =>
+  request.put<any, ModifyUserAvatarResponseData>(
+    API.MODIFYAVATAR_URL + id,
+    formData
+  );
+
+export const reqModifyPassword = (id: number, pwd: object) =>
+  request.put<any, ResponseData>(API.MODIFYPASSWORD_URL + id, pwd);

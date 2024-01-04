@@ -32,7 +32,7 @@ export const timeAgo = (param: any) => {
   const formattedDate: string = specifiedDate
     .toISOString()
     .split('T')[0]
-    .substring(6);
+    .substring(5);
   // 判断时间差并显示结果
   if (hours < 1) {
     return `最近更新`;

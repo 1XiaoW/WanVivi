@@ -107,8 +107,8 @@ let form = ref<any>();
 
 let userStore = useUserStore();
 let dataParam = reactive<DataParameter>({
-  username: '',
-  password: '',
+  username: 'dzq',
+  password: '123456',
 });
 let isLogin = ref<boolean>(true);
 

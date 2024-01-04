@@ -1,3 +1,96 @@
+<script setup lang="ts">
+// 引入评论区组件
+import Comments from './comment/index.vue';
+import { onMounted, ref, computed } from 'vue';
+import {
+  reqLikeAndCollect,
+  reqVideoById,
+  reqVideoLike,
+  reqVideoCollect,
+} from '@/api/video/index.ts';
+import { useRoute } from 'vue-router';
+import { VideoInfo, LikeAndCollect } from '@/api/video/type.ts';
+import { pNumHandler } from '@/utils/dataProcessing.ts';
+
+const server_url = import.meta.env.VITE_SERVER_URL;
+
+let $route = useRoute();
+let vId = Number($route.query.videoId);
+let vInfo = ref<VideoInfo>({
+  video_id: 0,
+  resolution: '',
+  url: '',
+  video_cover: '',
+  username: '',
+  channel: '',
+  id: 0,
+  title: '',
+  duration: 0,
+  upload_date: new Date(),
+  view_count: 0,
+  like_count: 0,
+  review_count: 0,
+  author_id: 0,
+  channel_id: 0,
+  brief: '',
+});
+// 是否点赞和收藏
+let LCInfo = ref<LikeAndCollect>({
+  like: false,
+  collect: false,
+});
+
+onMounted(() => {
+  getVideoLikeAndCollect();
+  videoInfo();
+});
+
+const videoInfo = async () => {
+  const result = await reqVideoById(vId);
+  if (result.status == 200) vInfo.value = result.data[0];
+};
+
+// 视频上传时间格式化
+const videoUpload = computed(() => {
+  let date = new Date(vInfo.value.upload_date);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+});
+
+// 获取用户对当前视频是否点赞和收藏
+const getVideoLikeAndCollect = async () => {
+  const res = await reqLikeAndCollect(vId);
+  if (res.status === 200) {
+    LCInfo.value = res.data;
+  }
+};
+
+// 点赞
+const onLike = async () => {
+  const res = await reqVideoLike(vId);
+  if (res.status === 200) {
+    getVideoLikeAndCollect();
+    videoInfo();
+  }
+};
+
+// 收藏
+const onCollect = async () => {
+  const res = await reqVideoCollect(vId);
+  console.log(res);
+  if (res.status === 200) {
+    getVideoLikeAndCollect();
+    videoInfo();
+  }
+};
+</script>
+
 <template>
   <div class="video_container">
     <!-- 视频标题 -->
@@ -73,35 +166,35 @@
     <el-row align="middle" style="flex-direction: column">
       <div class="video_tool">
         <div class="like">
-          <svg
-            t="1695266651071"
-            class="icon"
-            viewBox="0 0 1024 1024"
-            version="1.1"
-            xmlns="http://www.w3.org/2000/svg"
-            p-id="2405"
-            width="28"
-            height="28">
-            <path
-              d="M64 483.04V872c0 37.216 30.144 67.36 67.36 67.36H192V416.32l-60.64-0.64A67.36 67.36 0 0 0 64 483.04zM857.28 344.992l-267.808 1.696c12.576-44.256 18.944-83.584 18.944-118.208 0-78.56-68.832-155.488-137.568-145.504-60.608 8.8-67.264 61.184-67.264 126.816v59.264c0 76.064-63.84 140.864-137.856 148L256 416.96v522.4h527.552a102.72 102.72 0 0 0 100.928-83.584l73.728-388.96a102.72 102.72 0 0 0-100.928-121.824z"
-              p-id="2406"></path>
-          </svg>
+          <div @click="onLike">
+            <svg
+              :class="{ active: LCInfo.like }"
+              viewBox="0 0 1024 1024"
+              xmlns="http://www.w3.org/2000/svg"
+              width="28"
+              height="28">
+              <path
+                d="M64 483.04V872c0 37.216 30.144 67.36 67.36 67.36H192V416.32l-60.64-0.64A67.36 67.36 0 0 0 64 483.04zM857.28 344.992l-267.808 1.696c12.576-44.256 18.944-83.584 18.944-118.208 0-78.56-68.832-155.488-137.568-145.504-60.608 8.8-67.264 61.184-67.264 126.816v59.264c0 76.064-63.84 140.864-137.856 148L256 416.96v522.4h527.552a102.72 102.72 0 0 0 100.928-83.584l73.728-388.96a102.72 102.72 0 0 0-100.928-121.824z"
+                fill="currentColor"></path>
+            </svg>
+          </div>
           <span>{{ pNumHandler(vInfo.like_count) }}</span>
         </div>
         <div class="collect">
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 28 28"
-            xmlns="http://www.w3.org/2000/svg"
-            class="video-fav-icon video-toolbar-item-icon"
-            data-v-edb4b09a="">
-            <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M19.8071 9.26152C18.7438 9.09915 17.7624 8.36846 17.3534 7.39421L15.4723 3.4972C14.8998 2.1982 13.1004 2.1982 12.4461 3.4972L10.6468 7.39421C10.1561 8.36846 9.25639 9.09915 8.19315 9.26152L3.94016 9.91102C2.63155 10.0734 2.05904 11.6972 3.04049 12.6714L6.23023 15.9189C6.96632 16.6496 7.29348 17.705 7.1299 18.7605L6.39381 23.307C6.14844 24.6872 7.62063 25.6614 8.84745 25.0119L12.4461 23.0634C13.4276 22.4951 14.6544 22.4951 15.6359 23.0634L19.2345 25.0119C20.4614 25.6614 21.8518 24.6872 21.6882 23.307L20.8703 18.7605C20.7051 17.705 21.0339 16.6496 21.77 15.9189L24.9597 12.6714C25.9412 11.6972 25.3687 10.0734 24.06 9.91102L19.8071 9.26152Z"
-              fill="currentColor"></path>
-          </svg>
+          <div @click="onCollect">
+            <svg
+              :class="{ active: LCInfo.collect }"
+              width="28"
+              height="28"
+              viewBox="0 0 28 28"
+              xmlns="http://www.w3.org/2000/svg">
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M19.8071 9.26152C18.7438 9.09915 17.7624 8.36846 17.3534 7.39421L15.4723 3.4972C14.8998 2.1982 13.1004 2.1982 12.4461 3.4972L10.6468 7.39421C10.1561 8.36846 9.25639 9.09915 8.19315 9.26152L3.94016 9.91102C2.63155 10.0734 2.05904 11.6972 3.04049 12.6714L6.23023 15.9189C6.96632 16.6496 7.29348 17.705 7.1299 18.7605L6.39381 23.307C6.14844 24.6872 7.62063 25.6614 8.84745 25.0119L12.4461 23.0634C13.4276 22.4951 14.6544 22.4951 15.6359 23.0634L19.2345 25.0119C20.4614 25.6614 21.8518 24.6872 21.6882 23.307L20.8703 18.7605C20.7051 17.705 21.0339 16.6496 21.77 15.9189L24.9597 12.6714C25.9412 11.6972 25.3687 10.0734 24.06 9.91102L19.8071 9.26152Z"
+                fill="currentColor"></path>
+            </svg>
+          </div>
           <span>收藏功能暂时未开发</span>
         </div>
       </div>
@@ -111,61 +204,6 @@
     <el-row justify="center"> <Comments :vId="vId" /> </el-row>
   </div>
 </template>
-
-<script setup lang="ts">
-// 引入评论区组件
-import Comments from './comment/index.vue';
-import { onMounted, ref, computed } from 'vue';
-import { reqVideoById } from '@/api/video/index.ts';
-import { useRoute } from 'vue-router';
-import { VideoInfoResponseData, VideoInfo } from '@/api/video/type.ts';
-import { pNumHandler } from '@/utils/dataProcessing.ts';
-
-const server_url = import.meta.env.VITE_SERVER_URL;
-
-let $route = useRoute();
-let vId = Number($route.query.videoId);
-let vInfo = ref<VideoInfo>({
-  video_id: 0,
-  resolution: '',
-  url: '',
-  video_cover: '',
-  username: '',
-  channel: '',
-  id: 0,
-  title: '',
-  duration: 0,
-  upload_date: new Date(),
-  view_count: 0,
-  like_count: 0,
-  review_count: 0,
-  author_id: 0,
-  channel_id: 0,
-  brief: '',
-});
-
-onMounted(() => {
-  videoInfo();
-});
-
-const videoInfo = async () => {
-  let result: VideoInfoResponseData = await reqVideoById(vId);
-  if (result.status == 200) vInfo.value = result.data[0];
-};
-
-// 视频上传时间格式化
-const videoUpload = computed(() => {
-  let date = new Date(vInfo.value.upload_date);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
-
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-});
-</script>
 
 <style lang="scss" scoped>
 .video_container {
@@ -222,6 +260,12 @@ const videoUpload = computed(() => {
       display: flex;
       align-items: center;
       padding: 20px;
+      & div {
+        .active {
+          color: #00aeec;
+        }
+        cursor: pointer;
+      }
     }
   }
   .video_brief {

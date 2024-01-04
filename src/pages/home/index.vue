@@ -1,3 +1,62 @@
+<script setup lang="ts">
+// @ts-ignore
+import { Document } from '@element-plus/icons-vue';
+// 引入轮播图组件
+// @ts-ignore
+import carousel from './carousel/index.vue';
+import { ElMessage } from 'element-plus';
+import { onMounted, ref } from 'vue';
+import { reqVideo } from '@/api/video/index.ts';
+import { useRouter } from 'vue-router';
+import type { VideoResponseData, VideoContent } from '@/api/video/type.ts';
+// 以下代码有pinia接管
+// import { reqChannel } from '@/api/home/index.ts';
+// import type { ChannelContent, ChannelResponseData } from '@/api/home/type.ts';
+// let channelArr = ref<ChannelContent>([]);
+import useChannelStore from '@/store/modules/channel.ts';
+let videoArr = ref<VideoContent>([]);
+let $router = useRouter();
+let useChannel = useChannelStore();
+// 组件挂载完毕发送一次请求
+onMounted(() => {
+  getChannelInfo();
+  getVideoList();
+});
+
+// 获取频道数据
+const getChannelInfo = async () => {
+  try {
+    await useChannel.getChannelList();
+  } catch (error) {
+    ElMessage({
+      type: 'error',
+      message: '获取频道列表失败',
+    });
+  }
+};
+// 获取视频列表
+const getVideoList = async () => {
+  let result: VideoResponseData = await reqVideo();
+  if (result.status == 200) {
+    const arrIndex: Array<number> = [];
+    const arrformat: Array<any> = [];
+    while (arrIndex.length < 6) {
+      let random = Math.floor(Math.random() * result.data.length);
+      if (!arrIndex.includes(random)) {
+        arrIndex.push(random);
+        arrformat.push(result.data[random]);
+      }
+    }
+    videoArr.value = arrformat;
+  }
+};
+
+// 视频盒子点击事件
+const videoBoxHandler = async (vid: number) => {
+  $router.push({ path: '/video', query: { videoId: vid } });
+};
+</script>
+
 <template>
   <div class="container">
     <!-- 主页顶部 -->
@@ -77,65 +136,6 @@
     <div class="footer"></div>
   </div>
 </template>
-
-<script setup lang="ts">
-// @ts-ignore
-import { Document } from '@element-plus/icons-vue';
-// 引入轮播图组件
-// @ts-ignore
-import carousel from './carousel/index.vue';
-import { ElMessage } from 'element-plus';
-import { onMounted, ref } from 'vue';
-import { reqVideo } from '@/api/video/index.ts';
-import { useRouter } from 'vue-router';
-import type { VideoResponseData, VideoContent } from '@/api/video/type.ts';
-// 以下代码有pinia接管
-// import { reqChannel } from '@/api/home/index.ts';
-// import type { ChannelContent, ChannelResponseData } from '@/api/home/type.ts';
-// let channelArr = ref<ChannelContent>([]);
-import useChannelStore from '@/store/modules/channel.ts';
-let videoArr = ref<VideoContent>([]);
-let $router = useRouter();
-let useChannel = useChannelStore();
-// 组件挂载完毕发送一次请求
-onMounted(() => {
-  getChannelInfo();
-  getVideoList();
-});
-
-// 获取频道数据
-const getChannelInfo = async () => {
-  try {
-    await useChannel.getChannelList();
-  } catch (error) {
-    ElMessage({
-      type: 'error',
-      message: '获取频道列表失败',
-    });
-  }
-};
-// 获取视频列表
-const getVideoList = async () => {
-  let result: VideoResponseData = await reqVideo();
-  if (result.status == 200) {
-    const arrIndex: Array<number> = [];
-    const arrformat: Array<any> = [];
-    while (arrIndex.length < 6) {
-      let random = Math.floor(Math.random() * result.data.length);
-      if (!arrIndex.includes(random)) {
-        arrIndex.push(random);
-        arrformat.push(result.data[random]);
-      }
-    }
-    videoArr.value = arrformat;
-  }
-};
-
-// 视频盒子点击事件
-const videoBoxHandler = async (vid: number) => {
-  $router.push({ path: '/video', query: { videoId: vid } });
-};
-</script>
 
 <style lang="scss" scoped>
 .container {
