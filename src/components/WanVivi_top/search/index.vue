@@ -1,3 +1,35 @@
+<script setup lang="ts">
+import { ElMessage } from 'element-plus';
+import { ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
+
+let keyword = ref();
+let $router = useRouter();
+let clean = ref<boolean>();
+
+const keywordSearch = () => {
+  if (keyword.value && keyword.value.length > 2)
+    $router.push({ path: `/search`, query: { keyword: keyword.value } });
+  else
+    ElMessage.error({ message: '请输入2个以上关键词进行搜索', duration: 800 });
+};
+
+const cleanKeyword = () => {
+  keyword.value = '';
+};
+
+watch(
+  () => keyword.value,
+  (newValue) => {
+    if (newValue.length > 0) {
+      clean.value = true;
+    } else {
+      clean.value = false;
+    }
+  }
+);
+</script>
+
 <template>
   <div class="topbar_header_search">
     <div class="search-content">
@@ -5,14 +37,13 @@
         class="search-input"
         type="text"
         autocomplete="off"
-        accesskey="s"
         maxlength="100"
-        x-webkit-speech=""
         x-webkit-grammar="builtin:translate"
-        value=""
         placeholder="精神分裂症"
+        v-model="keyword"
+        @keyup.enter="keywordSearch"
         title="精神分裂症" />
-      <div class="search-clean">
+      <div class="search-clean" v-show="clean" @click="cleanKeyword">
         <svg
           width="16"
           height="16"
@@ -27,7 +58,7 @@
         </svg>
       </div>
     </div>
-    <div class="search-btn">
+    <div class="search-btn" @click="keywordSearch">
       <svg
         t="1694927023016"
         class="icon"
@@ -45,8 +76,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts"></script>
 
 <style lang="scss" scoped>
 .topbar_header_search {
@@ -72,6 +101,7 @@
       height: 32px;
       padding: 0 8px;
       border-radius: 6px;
+      color: black;
       &:focus {
         outline: none;
       }
@@ -79,10 +109,12 @@
     .search-clean {
       position: absolute;
       right: 10px;
+      cursor: pointer;
     }
   }
   .search-btn {
     margin: 10px;
+    cursor: pointer;
   }
 }
 </style>

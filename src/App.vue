@@ -1,13 +1,14 @@
 <template>
   <div class="container">
     <!-- 顶部全局组件 -->
-    <WanViviTop />
+    <!-- <WanViviTop /> -->
     <!-- 展示路由组件区域 -->
-    <div class="content">
+    <!-- <div class="content">
       <router-view></router-view>
-    </div>
+    </div> -->
     <!-- 底部全局组件 -->
-    <WanViviBottom />
+    <!-- <WanViviBottom /> -->
+    <router-view></router-view>
   </div>
 </template>
 

@@ -1,13 +1,20 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import {
   HomeFilled,
   MessageBox,
   UploadFilled,
   StarFilled,
 } from '@element-plus/icons-vue';
-import { useRouter } from 'vue-router';
+import { reqOtherUserInfo } from '@/api/user/index';
+import useUserStore from '@/store/modules/user';
+import { UserDetail } from '@/api/user/type';
+import { useRouter, useRoute } from 'vue-router';
 
+let userStore = useUserStore();
+const loginUser = userStore.userInfo.userId;
+const $route = useRoute();
+const userId = $route.params.userId;
 const $router = useRouter();
 const signText = ref();
 const cursor = ref();
@@ -17,10 +24,21 @@ const clickLi = ref({
   index: 0,
 });
 const activeIndex = ref(0);
+const urlStr = location.hash.split('/').at(-1);
+const userInfo = ref<UserDetail>({
+  id: 0,
+  username: '',
+  user_pic: '',
+  reg_date: '',
+  nickname: '',
+  email: '',
+  signature: '',
+});
 
 onMounted(() => {
   move();
-  lockMenu();
+  menuSelection(urlStr!);
+  getUserInfo();
 });
 
 const menuSelection = (route: string) => {
@@ -39,7 +57,8 @@ const menuSelection = (route: string) => {
       index = 3;
       break;
   }
-  $router.push({ path: `/userSpace/${route}` });
+  // $router.push({ path: `/userSpace/${route}` });
+  $router.push({ name: route });
   clickLi.value.offset = index * 92 + 'px';
   cursor.value.style.left = clickLi.value.offset;
   clickLi.value.index = activeIndex.value;
@@ -60,244 +79,270 @@ const move = () => {
   }
 };
 
-const lockMenu = () => {
-  let str = location.hash.split('/').at(-1);
-  menuSelection(str!);
+const getUserInfo = async () => {
+  const res = await reqOtherUserInfo(Number(userId));
+  if (res.status === 200) {
+    userInfo.value = res.data[0];
+  }
 };
+
+watch(
+  () => $route.name,
+  () => {
+    menuSelection($route.name?.toString()!);
+  }
+);
 </script>
 
 <template>
   <div class="container">
-    <div class="header">
-      <div class="gradient"></div>
-      <div class="user">
-        <div class="avatar">
-          <img src="../../assets/images/hotspot.avif" alt="" />
-        </div>
-        <div class="info">
-          <div class="name">邓紫棋啊</div>
-          <div class="sign">
-            <el-input
-              v-model="signText"
-              class="sign-input"
-              :border="false"
-              size="small"
-              placeholder="编辑个性签名"
-              type="text"
-              maxlength="60" />
-            <!-- <input type="text" placeholder="编辑个性签名" maxlength="60" /> -->
+    <WanViviTop />
+    <div class="content">
+      <div class="header">
+        <div class="gradient"></div>
+        <div class="user">
+          <div class="avatar">
+            <img
+              v-if="userInfo.user_pic"
+              :src="`http://localhost:5051${userInfo.user_pic}`"
+              alt="" />
+            <img v-else src="../../assets/images/hotspot.avif" alt="" />
+          </div>
+          <div class="info">
+            <div class="name">{{ userInfo.username }}</div>
+            <div class="sign">
+              <el-input
+                v-if="loginUser === userInfo.id"
+                v-model="signText"
+                class="sign-input"
+                :border="false"
+                size="small"
+                placeholder="编辑个性签名"
+                type="text"
+                maxlength="60" />
+              <div v-else class="sign-text">{{ userInfo.signature }}</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="header_nav">
-      <div class="menu">
-        <ul class="menu-list" ref="menuList">
-          <li @click="menuSelection('home')">
-            <HomeFilled
-              style="color: #00c091; width: 24px; height: 24px" /><span
-              :class="{ active: activeIndex === 0 }"
-              >主页</span
-            >
-          </li>
-          <li @click="menuSelection('dynamic')">
-            <MessageBox
-              style="color: #fb7299; width: 24px; height: 24px" /><span
-              :class="{ active: activeIndex === 1 }"
-              >动态</span
-            >
-          </li>
-          <li @click="menuSelection('uploads')">
-            <UploadFilled
-              style="color: #02b5da; width: 24px; height: 24px" /><span
-              :class="{ active: activeIndex === 2 }"
-              >投稿</span
-            >
-          </li>
-          <li @click="menuSelection('star')">
-            <StarFilled
-              style="color: #f3a034; width: 24px; height: 24px" /><span
-              :class="{ active: activeIndex === 3 }"
-              >收藏</span
-            >
-          </li>
-          <li ref="cursor" class="cursor"></li>
-        </ul>
+      <div class="header_nav">
+        <div class="menu">
+          <ul class="menu-list" ref="menuList">
+            <li @click="menuSelection('home')">
+              <HomeFilled
+                style="color: #00c091; width: 24px; height: 24px" /><span
+                :class="{ active: activeIndex === 0 }"
+                >主页</span
+              >
+            </li>
+            <li @click="menuSelection('dynamic')">
+              <MessageBox
+                style="color: #fb7299; width: 24px; height: 24px" /><span
+                :class="{ active: activeIndex === 1 }"
+                >动态</span
+              >
+            </li>
+            <li @click="menuSelection('uploads')">
+              <UploadFilled
+                style="color: #02b5da; width: 24px; height: 24px" /><span
+                :class="{ active: activeIndex === 2 }"
+                >投稿</span
+              >
+            </li>
+            <li @click="menuSelection('star')">
+              <StarFilled
+                style="color: #f3a034; width: 24px; height: 24px" /><span
+                :class="{ active: activeIndex === 3 }"
+                >收藏</span
+              >
+            </li>
+            <li ref="cursor" class="cursor"></li>
+          </ul>
+        </div>
+        <div class="statistics">
+          <ul class="statistics-list">
+            <li>
+              <div>关注数</div>
+              <span>44</span>
+            </li>
+            <li>
+              <div>粉丝数</div>
+              <span>1</span>
+            </li>
+            <li>
+              <div>获赞数</div>
+              <span>2</span>
+            </li>
+            <li>
+              <div>播放数</div>
+              <span>4</span>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="statistics">
-        <ul class="statistics-list">
-          <li>
-            <div>关注数</div>
-            <span>44</span>
-          </li>
-          <li>
-            <div>粉丝数</div>
-            <span>1</span>
-          </li>
-          <li>
-            <div>获赞数</div>
-            <span>2</span>
-          </li>
-          <li>
-            <div>播放数</div>
-            <span>4</span>
-          </li>
-        </ul>
+      <div class="middle-tabs">
+        <router-view></router-view>
       </div>
     </div>
-    <div class="middle-tabs">
-      <router-view></router-view>
-    </div>
+    <WanViviBottom />
   </div>
 </template>
 
 <style lang="scss" scoped>
 .container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  .header {
-    width: 90%;
-    height: 192px;
-    background-image: url('../../assets/images/userSpaceBG.webp');
-    background-position: 50%;
-    background-size: cover;
-    transition: background-image 0.2s ease, background-size 1s ease;
-    padding-top: 116px;
-    position: relative;
-    .gradient {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 84px;
-      background: linear-gradient(to bottom, transparent, #464545);
-    }
-    .user {
-      position: relative;
-      z-index: 10;
-      display: flex;
-      margin-left: 20px;
-      .avatar {
-        img {
-          width: 60px;
-          height: 60px;
-          border-radius: 50%;
-        }
-      }
-      .info {
-        margin-left: 26px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        .name {
-          display: inline-block;
-          margin-right: 5px;
-          font-weight: 700;
-          line-height: 18px;
-          font-size: 18px;
-          color: #fff;
-          vertical-align: middle;
-        }
-        .sign {
-          .sign-input {
-            :deep(.el-input__wrapper) {
-              background-color: transparent;
-              box-shadow: none;
-              padding: 0;
-            }
-            :deep(.el-input__inner) {
-              color: hsla(0, 0%, 100%, 0.8);
-              border-radius: 4px;
-              font-size: 12px;
-              font-family: Microsoft Yahei;
-              line-height: 26px;
-              height: 26px;
-              margin-left: -5px;
-              padding: 0 5px;
-              position: relative;
-              top: -1px;
-              width: 730px;
-              &:focus {
-                background-color: white;
-                color: #333;
-                box-shadow: 0 0 0 1px
-                  var(--el-input-border-color, var(--el-border-color)) inset;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  .header_nav {
-    padding: 0 20px;
-    width: 90%;
-    height: 66px;
-    background-color: #eee;
+  .content {
+    width: 1400px;
+    margin: auto;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    .menu {
-      font-size: 12px;
-      height: 100%;
-      .menu-list {
-        position: relative;
-        display: flex;
-        height: 100%;
-        li {
-          width: 60px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          cursor: pointer;
-          margin: 0 16px;
-          &:hover span {
-            color: #00a1d6;
-          }
-          .active {
-            color: #00a1d6;
-          }
-        }
-        .cursor {
-          position: absolute;
-          bottom: 0px;
-          left: 0;
-          background: #00a1d6;
-          width: 60px;
-          height: 3px;
-          transition: all 0.5s ease;
-          border-top-left-radius: 3px;
-          border-top-right-radius: 3px;
-        }
+    .header {
+      width: 90%;
+      height: 192px;
+      background-image: url('../../assets/images/userSpaceBG.webp');
+      background-position: 50%;
+      background-size: cover;
+      transition: background-image 0.2s ease, background-size 1s ease;
+      padding-top: 116px;
+      position: relative;
+      .gradient {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 84px;
+        background: linear-gradient(to bottom, transparent, #464545);
       }
-    }
-    .statistics {
-      .statistics-list {
+      .user {
+        position: relative;
+        z-index: 10;
         display: flex;
-        li {
+        margin-left: 20px;
+        .avatar {
+          img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+          }
+        }
+        .info {
+          margin-left: 26px;
           display: flex;
           flex-direction: column;
-          align-items: center;
-          margin: 0 4px;
-          div {
-            line-height: 14px;
-            font-size: 12px;
-            color: #99a2aa;
+          justify-content: space-around;
+          .name {
+            display: inline-block;
+            margin-right: 5px;
+            font-weight: 700;
+            line-height: 18px;
+            font-size: 18px;
+            color: #fff;
+            vertical-align: middle;
           }
-          span {
-            line-height: 16px;
-            margin-top: 5px;
-            color: #222;
-            font-size: 12px;
+          .sign {
+            .sign-input {
+              :deep(.el-input__wrapper) {
+                background-color: transparent;
+                box-shadow: none;
+                padding: 0;
+              }
+              :deep(.el-input__inner) {
+                color: hsla(0, 0%, 100%, 0.8);
+                border-radius: 4px;
+                font-size: 12px;
+                font-family: Microsoft Yahei;
+                line-height: 26px;
+                height: 26px;
+                margin-left: -5px;
+                padding: 0 5px;
+                position: relative;
+                top: -1px;
+                width: 730px;
+                &:focus {
+                  background-color: white;
+                  color: #333;
+                  box-shadow: 0 0 0 1px
+                    var(--el-input-border-color, var(--el-border-color)) inset;
+                }
+              }
+            }
+            .sign-text {
+              font-size: 12px;
+              color: hsla(0, 0%, 100%, 0.8);
+            }
           }
         }
       }
     }
-  }
-  .middle-tabs {
-    width: 90%;
+    .header_nav {
+      padding: 0 20px;
+      width: 90%;
+      height: 66px;
+      background-color: #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .menu {
+        font-size: 12px;
+        height: 100%;
+        .menu-list {
+          position: relative;
+          display: flex;
+          height: 100%;
+          li {
+            width: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            margin: 0 16px;
+            &:hover span {
+              color: #00a1d6;
+            }
+            .active {
+              color: #00a1d6;
+            }
+          }
+          .cursor {
+            position: absolute;
+            bottom: 0px;
+            left: 0;
+            background: #00a1d6;
+            width: 60px;
+            height: 3px;
+            transition: all 0.5s ease;
+            border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
+          }
+        }
+      }
+      .statistics {
+        .statistics-list {
+          display: flex;
+          li {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 4px;
+            div {
+              line-height: 14px;
+              font-size: 12px;
+              color: #99a2aa;
+            }
+            span {
+              line-height: 16px;
+              margin-top: 5px;
+              color: #222;
+              font-size: 12px;
+            }
+          }
+        }
+      }
+    }
+    .middle-tabs {
+      width: 90%;
+    }
   }
 }
 </style>

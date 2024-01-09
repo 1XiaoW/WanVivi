@@ -35,6 +35,7 @@ export interface UserDetail {
   reg_date: string;
   nickname: string;
   email: string;
+  signature: string;
 }
 
 // 用户信息请求接口返回数据类型

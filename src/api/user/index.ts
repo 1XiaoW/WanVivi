@@ -15,6 +15,8 @@ enum API {
   USERREGISTER_URL = '/user/reguser',
   // 用户信息接口GET
   USERINFO_URL = '/user/auth/userInfo/',
+  // 获取其他用户信息接口GET
+  USERINFO_OTHER_URL = '/user/userInfo/',
   // 修改用户信息接口PUT
   MODIFYUSERINFO_URL = '/user/auth/userInfo/',
   // 修改用户头像接口
@@ -31,6 +33,9 @@ export const reqUserRegister = (data: DataParameter) =>
 
 export const reqUserInfo = (id: number = -1) =>
   request.get<any, UserDetailResponseData>(API.USERINFO_URL + id);
+
+export const reqOtherUserInfo = (id: number = -1) =>
+  request.get<any, UserDetailResponseData>(API.USERINFO_OTHER_URL + id);
 
 export const reqModifyUserInfo = (id: number, data: object) =>
   request.put<any, ResponseData>(API.MODIFYUSERINFO_URL + id, data);

@@ -159,7 +159,7 @@ const goUserSpace = (el: any) => {
   let current = el.props.name;
   // 为了打开新窗口用下面方式
   if (current === 'four') {
-    const url = $router.resolve(`userSpace`);
+    const url = $router.resolve(`userSpace/${userId}`);
     window.open(url.href, '_blank');
   }
 };
@@ -167,154 +167,161 @@ const goUserSpace = (el: any) => {
 
 <template>
   <div class="container">
-    <el-card class="box-card">
-      <template #header>
-        <div class="card-header">
-          <span>个人中心</span>
-        </div>
-      </template>
-      <el-tabs
-        tab-position="left"
-        v-model="activeName"
-        class="demo-tabs"
-        @tab-click="goUserSpace">
-        <el-tab-pane name="first">
-          <template #label>
-            <span class="custom-tabs-label">
-              <el-icon><User /></el-icon>
-              <span>我的信息</span>
-            </span>
-          </template>
-          <el-form
-            ref="form"
-            :model="userInfo"
-            label-width="auto"
-            label-position="left"
-            size="default">
-            <el-form-item label="用户名:">
-              {{ userInfo.name }}
-            </el-form-item>
-            <el-form-item label="昵称">
-              <el-input v-model="userInfo.nickname" />
-            </el-form-item>
-            <el-form-item label="邮箱">
-              <el-input v-model="userInfo.email" />
-            </el-form-item>
+    <WanViviTop />
+    <div class="content">
+      <el-card class="box-card">
+        <template #header>
+          <div class="card-header">
+            <span>个人中心</span>
+          </div>
+        </template>
+        <el-tabs
+          tab-position="left"
+          v-model="activeName"
+          class="demo-tabs"
+          @tab-click="goUserSpace">
+          <el-tab-pane name="first">
+            <template #label>
+              <span class="custom-tabs-label">
+                <el-icon><User /></el-icon>
+                <span>我的信息</span>
+              </span>
+            </template>
+            <el-form
+              ref="form"
+              :model="userInfo"
+              label-width="auto"
+              label-position="left"
+              size="default">
+              <el-form-item label="用户名:">
+                {{ userInfo.name }}
+              </el-form-item>
+              <el-form-item label="昵称">
+                <el-input v-model="userInfo.nickname" />
+              </el-form-item>
+              <el-form-item label="邮箱">
+                <el-input v-model="userInfo.email" />
+              </el-form-item>
 
-            <el-form-item class="save">
-              <el-button type="primary" @click="onModifyUserInfo"
-                >保存</el-button
-              >
-            </el-form-item>
-          </el-form>
-        </el-tab-pane>
-        <el-tab-pane name="second">
-          <template #label>
-            <span class="custom-tabs-label">
-              <el-icon><Avatar /></el-icon>
-              <span>我的头像</span>
-            </span>
-          </template>
-          <el-upload
-            class="avatar-uploader"
-            :show-file-list="false"
-            :auto-upload="false"
-            :on-change="beforeAvatarUpload">
-            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-          </el-upload>
-          <el-button type="primary" @click="updateAvatar">更新</el-button>
-        </el-tab-pane>
-        <el-tab-pane name="third">
-          <template #label>
-            <span class="custom-tabs-label">
-              <el-icon><Lock /></el-icon>
-              <span>修改密码</span>
-            </span>
-          </template>
-          <el-form
-            ref="pwdFormRef"
-            :model="userPwd"
-            label-width="auto"
-            label-position="left"
-            :rules="passwordRules"
-            size="default">
-            <el-form-item label="原密码" prop="originPwd">
-              <el-input v-model="userPwd.originPwd" />
-            </el-form-item>
-            <el-form-item label="新密码" prop="newPwd">
-              <el-input v-model="userPwd.newPwd" />
-            </el-form-item>
-            <el-form-item label="确认密码" prop="confirmPwd">
-              <el-input v-model="userPwd.confirmPwd" />
-            </el-form-item>
-            <el-form-item class="save">
-              <el-button type="primary" @click="onModifyPwd(pwdFormRef!)"
-                >修改</el-button
-              >
-            </el-form-item>
-          </el-form>
-        </el-tab-pane>
-        <el-tab-pane name="four">
-          <template #label @click="goUserSpace">
-            <span class="custom-tabs-label">
-              <el-icon><Lock /></el-icon>
-              <span>个人空间</span>
-            </span>
-          </template>
-        </el-tab-pane>
-      </el-tabs>
-    </el-card>
+              <el-form-item class="save">
+                <el-button type="primary" @click="onModifyUserInfo"
+                  >保存</el-button
+                >
+              </el-form-item>
+            </el-form>
+          </el-tab-pane>
+          <el-tab-pane name="second">
+            <template #label>
+              <span class="custom-tabs-label">
+                <el-icon><Avatar /></el-icon>
+                <span>我的头像</span>
+              </span>
+            </template>
+            <el-upload
+              class="avatar-uploader"
+              :show-file-list="false"
+              :auto-upload="false"
+              :on-change="beforeAvatarUpload">
+              <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+              <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+            </el-upload>
+            <el-button type="primary" @click="updateAvatar">更新</el-button>
+          </el-tab-pane>
+          <el-tab-pane name="third">
+            <template #label>
+              <span class="custom-tabs-label">
+                <el-icon><Lock /></el-icon>
+                <span>修改密码</span>
+              </span>
+            </template>
+            <el-form
+              ref="pwdFormRef"
+              :model="userPwd"
+              label-width="auto"
+              label-position="left"
+              :rules="passwordRules"
+              size="default">
+              <el-form-item label="原密码" prop="originPwd">
+                <el-input v-model="userPwd.originPwd" />
+              </el-form-item>
+              <el-form-item label="新密码" prop="newPwd">
+                <el-input v-model="userPwd.newPwd" />
+              </el-form-item>
+              <el-form-item label="确认密码" prop="confirmPwd">
+                <el-input v-model="userPwd.confirmPwd" />
+              </el-form-item>
+              <el-form-item class="save">
+                <el-button type="primary" @click="onModifyPwd(pwdFormRef!)"
+                  >修改</el-button
+                >
+              </el-form-item>
+            </el-form>
+          </el-tab-pane>
+          <el-tab-pane name="four">
+            <template #label @click="goUserSpace">
+              <span class="custom-tabs-label">
+                <el-icon><Lock /></el-icon>
+                <span>个人空间</span>
+              </span>
+            </template>
+          </el-tab-pane>
+        </el-tabs>
+      </el-card>
+    </div>
+    <WanViviBottom />
   </div>
 </template>
 
 <style lang="scss" scoped>
 .container {
-  display: flex;
-  justify-content: center;
-
-  .box-card {
-    width: 75%;
-    margin-top: 100px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.14);
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    :deep(.text) {
-      font-size: 14px;
-    }
-
-    :deep(.item) {
-      margin-bottom: 18px;
-    }
-
-    .demo-tabs {
-      & > :deep(.el-tabs__content) {
+  .content {
+    width: 1400px;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    .box-card {
+      width: 75%;
+      margin-top: 100px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.14);
+      .card-header {
         display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      :deep(.text) {
+        font-size: 14px;
+      }
+
+      :deep(.item) {
+        margin-bottom: 18px;
+      }
+
+      .demo-tabs {
+        & > :deep(.el-tabs__content) {
+          display: flex;
+          justify-content: center;
+          padding: 32px;
+          color: #6b778c;
+          font-size: 32px;
+          font-weight: 600;
+        }
+        .avatar-uploader .avatar {
+          width: 160px;
+          height: 160px;
+          display: block;
+        }
+      }
+      .demo-tabs .custom-tabs-label :deep(.el-icon) {
+        vertical-align: middle;
+      }
+      .demo-tabs .custom-tabs-label span {
+        vertical-align: middle;
+        margin-left: 4px;
+      }
+      .save :deep(.el-form-item__content) {
         justify-content: center;
-        padding: 32px;
-        color: #6b778c;
-        font-size: 32px;
-        font-weight: 600;
       }
-      .avatar-uploader .avatar {
-        width: 160px;
-        height: 160px;
-        display: block;
-      }
-    }
-    .demo-tabs .custom-tabs-label :deep(.el-icon) {
-      vertical-align: middle;
-    }
-    .demo-tabs .custom-tabs-label span {
-      vertical-align: middle;
-      margin-left: 4px;
-    }
-    .save :deep(.el-form-item__content) {
-      justify-content: center;
     }
   }
 }

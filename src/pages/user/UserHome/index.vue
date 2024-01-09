@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { reqVideoByAuthorId } from '@/api/video';
-import useUserStore from '@/store/modules/user';
+// import useUserStore from '@/store/modules/user';
 import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 
 const actived = ref(0);
 const cursor = ref();
 const videoList = ref();
 let $router = useRouter();
-let userStore = useUserStore();
-const authorId = userStore.userInfo.userId;
+let $route = useRoute();
+// let userStore = useUserStore();
+// const authorId = userStore.userInfo.userId;
+const authorId = $route.params.userId;
 onMounted(() => {
   getVideoByAuthorId();
 });
@@ -45,7 +47,7 @@ const videoBoxHandler = async (vid: number) => {
           <div class="title">
             <el-link
               :underline="false"
-              href="http://localhost:5173/#/userSpace/uploads"
+              href="http://localhost:5173/#/userSpace/15/uploads"
               >TA的视频</el-link
             >
             <span class="count">123</span>
@@ -65,13 +67,14 @@ const videoBoxHandler = async (vid: number) => {
           <div class="more">更多></div>
         </div>
       </div>
-      <div class="my-video-content">
+      <div class="my-video-content" v-if="videoList && videoList.length !== 0">
         <VideoBox
           v-for="(item, index) in videoList"
           :key="index"
           :videoInfo="item"
           @click="videoBoxHandler(item.video_id)" />
       </div>
+      <div v-else>暂无更多</div>
     </el-card>
     <el-card class="home-right">你好啊</el-card>
   </div>
@@ -178,7 +181,7 @@ const videoBoxHandler = async (vid: number) => {
     padding-top: 20px;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 30pax;
+    gap: 30px;
   }
   .home-right {
     height: 100px;

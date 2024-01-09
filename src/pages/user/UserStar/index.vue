@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { reqCollectVideoByAuthorId } from '@/api/video';
-import useUserStore from '@/store/modules/user';
+// import useUserStore from '@/store/modules/user';
 import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 let $router = useRouter();
-let userStore = useUserStore();
-const authorId = userStore.userInfo.userId;
+let $route = useRoute();
+// let userStore = useUserStore();
+// const authorId = userStore.userInfo.userId;
+const authorId = $route.params.userId;
 
 const videoList = ref();
 
@@ -42,13 +44,16 @@ const videoBoxHandler = async (vid: number) => {
         </el-menu>
       </el-aside>
       <el-main>
-        <div class="my-video-content">
+        <div
+          class="my-video-content"
+          v-if="videoList && videoList.length !== 0">
           <VideoBox
             v-for="(item, index) in videoList"
             :key="index"
             :videoInfo="item"
             @click="videoBoxHandler(item.video_id)" />
         </div>
+        <div v-else>暂无更多</div>
       </el-main>
     </el-container>
   </div>

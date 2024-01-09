@@ -20,6 +20,7 @@ enum API {
   VIDEO_COMMENTS_POST = '/video/auth/comment/',
   VIDEO_BYAUTHORID = '/video/getVideoListByAuthorId/',
   VIDEO_COLLECTBYAUTHORID = '/video/getCollectVideoByAuthorId/',
+  VIDEO_SEARCHBYKEYWORD = '/video/getSearchVideo/',
 }
 
 // 获取视频信息(可按频道取值)
@@ -76,4 +77,10 @@ export const reqVideoByAuthorId = (authorId: number) =>
 export const reqCollectVideoByAuthorId = (authorId: number) =>
   request.get<any, VideoInfoResponseData>(API.VIDEO_COLLECTBYAUTHORID, {
     params: { authorId },
+  });
+
+// 通过关键字搜索相关视频
+export const reqSearchByKeyword = (keyword: number) =>
+  request.get<any, VideoInfoResponseData>(API.VIDEO_SEARCHBYKEYWORD, {
+    params: { keyword },
   });

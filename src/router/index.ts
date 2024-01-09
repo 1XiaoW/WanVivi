@@ -22,31 +22,45 @@ const router = createRouter({
       component: () => import('@/pages/user/userInfo.vue'),
     },
     {
-      path: '/userSpace',
+      path: '/userSpace/:userId',
       component: () => import('@/pages/user/userSpace.vue'),
-      redirect: '/userSpace/home',
+      redirect: { name: 'home' },
       children: [
         {
           path: 'dynamic',
+          name: 'dynamic',
           component: () => import('@/pages/user/UserDynamic/index.vue'),
         },
         {
           path: 'home',
+          name: 'home',
           component: () => import('@/pages/user/UserHome/index.vue'),
         },
         {
           path: 'star',
+          name: 'star',
           component: () => import('@/pages/user/UserStar/index.vue'),
         },
         {
           path: 'uploads',
+          name: 'uploads',
           component: () => import('@/pages/user/UserUploads/index.vue'),
         },
       ],
     },
     {
+      path: '/search',
+      component: () => import('@/pages/search/index.vue'),
+      props: (route) => ({ query: route.query.keyword }),
+    },
+    {
       path: '/',
       redirect: 'home',
+    },
+    {
+      name: '404',
+      path: '/:catchAll(.*)',
+      component: () => import('@/pages/404/index.vue'),
     },
   ],
 });
