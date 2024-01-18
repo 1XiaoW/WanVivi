@@ -10,6 +10,7 @@ type userInfo = {
   avatar: string;
   username: string;
   token: string;
+  unread_message: number;
 };
 const useUserStore = defineStore('User', {
   state: () => {
@@ -39,7 +40,13 @@ const useUserStore = defineStore('User', {
     //退出登录的方法
     async logout() {
       //清空仓库的数据
-      this.userInfo = { name: '', token: '', userId: '', avatar: '' };
+      this.userInfo = {
+        username: '',
+        token: '',
+        userId: NaN,
+        avatar: '',
+        unread_message: NaN,
+      };
       //清空本地存储的数据
       REMOVE_TOKEN();
     },
@@ -51,6 +58,11 @@ const useUserStore = defineStore('User', {
         this.userInfo = { ...this.userInfo, avatar: userInfo };
         SET_TOKEN(JSON.stringify(this.userInfo));
       }
+    },
+
+    // 更改信息已读状态
+    updateMessageState() {
+      this.userInfo.unread_message = 0;
     },
   },
 });

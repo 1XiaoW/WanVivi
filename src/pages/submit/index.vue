@@ -25,8 +25,8 @@ const formRef = ref();
 const uploadRef = ref();
 const loading = ref(false);
 let addForm: VideoForm = reactive({
-  videoTitle: '1',
-  videoBrief: '2',
+  videoTitle: '',
+  videoBrief: '',
   videoAreaId: 0,
   videoAreaName: '',
 });

@@ -2,17 +2,21 @@
 //@ts-ignore
 import { VideoCamera, Download, Search, Upload } from '@element-plus/icons-vue';
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 //获取user仓库的数据（visiable）可以控制login组件的对话框显示与隐藏
 import useUserStore from '@/store/modules/user';
-//@ts-ignore
 import search from './search/index.vue';
+
 let userStore = useUserStore();
 let server_url = import.meta.env.VITE_SERVER_URL;
+
+const props = defineProps(['specialPage']);
 
 let vidRef = ref();
 let x: number = 0;
 let _x = null;
 let isFixed = ref<boolean>(false);
+const $router = useRouter();
 
 onMounted(() => {
   document.addEventListener('scroll', getWindowY);
@@ -54,11 +58,16 @@ const getWindowY = () => {
     isFixed.value = false;
   }
 };
+
+const goMessage = () => {
+  $router.push('/message');
+  userStore.updateMessageState();
+};
 </script>
 
 <template>
   <div class="top">
-    <div class="top_banner">
+    <div class="top_banner" v-if="!props.specialPage">
       <div
         class="vidContainer"
         @mouseenter="handleMouseEnter"
@@ -73,7 +82,12 @@ const getWindowY = () => {
           src="../../assets/video/3.webm"></video>
       </div>
     </div>
-    <div :class="{ top_nav: true, top_nav_fixed: isFixed }">
+    <div
+      :class="{
+        top_nav: true,
+        top_nav_fixed: isFixed,
+        top_nav_other: props.specialPage,
+      }">
       <div class="left">
         <ul>
           <li @click="$router.push('/home')">
@@ -144,6 +158,9 @@ const getWindowY = () => {
                     <el-dropdown-item @click="$router.push('/userInfo')"
                       >个人中心</el-dropdown-item
                     >
+                    <el-dropdown-item @click="$router.push('/manage')"
+                      >管理中心</el-dropdown-item
+                    >
                     <el-dropdown-item @click="logout"
                       >退出登录</el-dropdown-item
                     >
@@ -156,7 +173,10 @@ const getWindowY = () => {
           <li>
             <el-icon size="18"><Search /></el-icon>小会员
           </li>
-          <li>
+          <li @click="goMessage">
+            <div
+              class="red-message"
+              v-if="userStore.userInfo.unread_message"></div>
             <el-icon size="18"><Search /></el-icon>消息
           </li>
           <li>
@@ -248,7 +268,12 @@ const getWindowY = () => {
         min-width: 416px;
         display: flex;
         li {
+          position: relative;
           cursor: pointer;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          margin: 0 7px;
           &:hover {
             ::v-deep(.el-icon) {
               animation: bounce 0.3s linear;
@@ -260,19 +285,30 @@ const getWindowY = () => {
             background-color: #ccc;
             border-radius: 50%;
           }
+          .red-message {
+            position: absolute;
+            left: 18px;
+            top: -2px;
+            border: 4px solid #fa5a57;
+            z-index: 1;
+            border-radius: 50%;
+          }
           ::v-deep(.el-icon) {
             margin-bottom: 5px;
           }
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          margin: 0 7px;
         }
       }
     }
   }
   .top_nav_fixed {
     position: fixed;
+    color: black;
+    background-color: #fff;
+  }
+
+  .top_nav_other {
+    box-shadow: 0 2px 4px #00000014;
+    position: inherit;
     color: black;
     background-color: #fff;
   }

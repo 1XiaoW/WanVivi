@@ -16,6 +16,7 @@ export interface UserInfo {
   username: string;
   token: string;
   avatar: string;
+  unread_message: number;
 }
 
 // 登录请求返回的数据类型

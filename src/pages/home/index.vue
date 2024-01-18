@@ -58,7 +58,7 @@ const videoBoxHandler = async (vid: number) => {
 </script>
 
 <template>
-  <div class="container">
+  <div class="home-container">
     <WanViviTop />
     <div class="content">
       <!-- 主页顶部 -->
@@ -134,6 +134,308 @@ const videoBoxHandler = async (vid: number) => {
           </div>
         </div>
       </div>
+
+      <!-- 推广广告部分 -->
+      <div class="first-report-section">
+        <div class="f-left-wrapper">
+          <div class="f-left-header">
+            <div class="fa fa-paper-plane"></div>
+            <div style="font-size: 20px; margin-right: 20px">推广</div>
+            <div style="font-size: 12px; color: #505050; line-height: 24.8px">
+              <span
+                class="fa fa-fire"
+                style="
+                  color: #f0361b;
+                  font-size: 15px;
+                  margin-right: 5px;
+                "></span>
+              萌系星探官招募中
+            </div>
+          </div>
+          <div class="f-left-content">
+            <div>
+              <img src="../../assets/images/report1.webp" alt="" />
+              <p>剧场版大雄究竟有多强！</p>
+              <span class="up" style="color: #99a6c4; margin-top: 15px">UP</span
+              >沐沐秋
+            </div>
+            <div>
+              <img src="../../assets/images/report2.webp" alt="" />
+              <p>战斗吧！素质</p>
+              <span class="up" style="color: #99a6c4; margin-top: 15px">UP</span
+              >沐沐秋
+            </div>
+            <div>
+              <img src="../../assets/images/report3.webp" alt="" />
+              <p>耗时半年！up主用中文填词的</p>
+              <span class="up" style="color: #99a6c4; margin-top: 15px">UP</span
+              >沐沐秋
+            </div>
+            <div>
+              <img src="../../assets/images/report4.webp" alt="" />
+              <p>4K /60FPS紫罗兰永恒花园</p>
+              <span class="up" style="color: #99a6c4; margin-top: 15px">UP</span
+              >沐沐秋
+            </div>
+          </div>
+        </div>
+        <div class="f-right-wrapper">
+          <div class="f-right-header">
+            <h2>观看列表</h2>
+          </div>
+          <div class="f-right-content">
+            <img src="../../assets/images/fenli.jpg" style="width: 320px" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 动画板块 -->
+      <div class="first-report-section">
+        <div class="f-left-wrapper f-other-2">
+          <div class="f-left-header">
+            <div
+              class="fab fa-centercode"
+              style="color: #9796ed; font-size: 25px; margin-right: 10px"></div>
+            <div style="font-size: 20px; margin-right: 20px">动画</div>
+          </div>
+          <div class="f-left-content other-1">
+            <div>
+              <img src="../../assets/images/flashSection/1.webp" alt="" />
+              <p style="text-overflow: ellipsis">
+                这么漂亮的居然是哥哥的女朋友？
+              </p>
+              <em class="bott-1">
+                <i
+                  class="fa fa-video"
+                  style="color: white; margin-right: 5px"></i>
+                <span style="margin-right: 15px">43.5万</span>
+                <i class="fa fa-mercury"></i>
+                <span>11.1万</span>
+                <i style="margin-left: 24px">01:43</i>
+              </em>
+              <span class="up" style="color: #999999; margin-top: 15px">UP</span
+              >沐沐秋
+            </div>
+            <div>
+              <img src="../../assets/images/flashSection/2.webp" alt="" />
+              <p>无声铃鹿卷土重来</p>
+              <em class="bott-1">
+                <i
+                  class="fa fa-video"
+                  style="color: white; margin-right: 5px"></i>
+                <span style="margin-right: 15px">43.5万</span>
+                <i class="fa fa-mercury"></i>
+                <span>11.1万</span>
+                <i style="margin-left: 24px">01:43</i>
+              </em>
+              <span class="up" style="color: #999999; margin-top: 15px">UP</span
+              >沐沐秋
+            </div>
+            <div>
+              <img src="../../assets/images/flashSection/3.webp" alt="" />
+              <p>此视频可能会拯救你的视力</p>
+              <em class="bott-1">
+                <i
+                  class="fa fa-video"
+                  style="color: white; margin-right: 5px"></i>
+                <span style="margin-right: 15px">43.5万</span>
+                <i class="fa fa-mercury"></i>
+                <span>11.1万</span>
+                <i style="margin-left: 24px">01:43</i>
+              </em>
+              <span class="up" style="color: #999999; margin-top: 15px">UP</span
+              >沐沐秋
+            </div>
+            <div>
+              <img src="../../assets/images/flashSection/4.webp" alt="" />
+              <p>某虚拟主播竟然？</p>
+              <em class="bott-1">
+                <i
+                  class="fa fa-video"
+                  style="color: white; margin-right: 5px"></i>
+                <span style="margin-right: 15px">43.5万</span>
+                <i class="fa fa-mercury"></i>
+                <span>11.1万</span>
+                <i style="margin-left: 24px">01:43</i>
+              </em>
+              <span class="up" style="color: #999999; margin-top: 15px">UP</span
+              >沐沐秋
+            </div>
+            <div>
+              <img src="../../assets/images/flashSection/5.webp" alt="" />
+              <p>究极社死？？？？</p>
+              <em class="bott-1">
+                <i
+                  class="fa fa-video"
+                  style="color: white; margin-right: 5px"></i>
+                <span style="margin-right: 15px">43.5万</span>
+                <i class="fa fa-mercury"></i>
+                <span>11.1万</span>
+                <i style="margin-left: 24px">01:43</i>
+              </em>
+              <span class="up" style="color: #999999; margin-top: 15px">UP</span
+              >沐沐秋
+            </div>
+            <div>
+              <img src="../../assets/images/flashSection/6.webp" alt="" />
+              <p>史诗级刀子片？时光代理人？？</p>
+              <em class="bott-1">
+                <i
+                  class="fa fa-video"
+                  style="color: white; margin-right: 5px"></i>
+                <span style="margin-right: 15px">43.5万</span>
+                <i class="fa fa-mercury"></i>
+                <span>11.1万</span>
+                <i style="margin-left: 24px">01:43</i>
+              </em>
+              <span class="up" style="color: #999999; margin-top: 15px">UP</span
+              >沐沐秋
+            </div>
+            <div>
+              <img src="../../assets/images/flashSection/7.webp" alt="" />
+              <p>耗时半年！up主用中文填词的</p>
+              <em class="bott-1">
+                <i
+                  class="fa fa-video"
+                  style="color: white; margin-right: 5px"></i>
+                <span style="margin-right: 15px">43.5万</span>
+                <i class="fa fa-mercury"></i>
+                <span>11.1万</span>
+                <i style="margin-left: 24px">01:43</i>
+              </em>
+              <span class="up" style="color: #999999; margin-top: 15px">UP</span
+              >沐沐秋
+            </div>
+            <div>
+              <img src="../../assets/images/flashSection/8.webp" alt="" />
+              <p>JOJO的奇妙冒险</p>
+              <em class="bott-1">
+                <i
+                  class="fa fa-video"
+                  style="color: white; margin-right: 5px"></i>
+                <span style="margin-right: 15px">43.5万</span>
+                <i class="fa fa-mercury"></i>
+                <span>11.1万</span>
+                <i style="margin-left: 24px">01:43</i>
+              </em>
+              <span class="up" style="color: #999999; margin-top: 15px">UP</span
+              >沐沐秋
+            </div>
+            <div>
+              <img src="../../assets/images/flashSection/2.webp" alt="" />
+              <p>无声铃鹿卷土重来</p>
+              <em class="bott-1">
+                <i
+                  class="fa fa-video"
+                  style="color: white; margin-right: 5px"></i>
+                <span style="margin-right: 15px">43.5万</span>
+                <i class="fa fa-mercury"></i>
+                <span>11.1万</span>
+                <i style="margin-left: 24px">01:43</i>
+              </em>
+              <span class="up" style="color: #999999; margin-top: 15px">UP</span
+              >沐沐秋
+            </div>
+            <div>
+              <img src="../../assets/images/flashSection/3.webp" alt="" />
+              <p>此视频可能会拯救你的视力</p>
+              <em class="bott-1">
+                <i
+                  class="fa fa-video"
+                  style="color: white; margin-right: 5px"></i>
+                <span style="margin-right: 15px">43.5万</span>
+                <i class="fa fa-mercury"></i>
+                <span>11.1万</span>
+                <i style="margin-left: 24px">01:43</i>
+              </em>
+              <span class="up" style="color: #999999; margin-top: 15px">UP</span
+              >沐沐秋
+            </div>
+            <div>
+              <img src="../../assets/images/flashSection/4.webp" alt="" />
+              <p>某虚拟主播竟然？</p>
+              <em class="bott-1">
+                <i
+                  class="fa fa-video"
+                  style="color: white; margin-right: 5px"></i>
+                <span style="margin-right: 15px">43.5万</span>
+                <i class="fa fa-mercury"></i>
+                <span>11.1万</span>
+                <i style="margin-left: 24px">01:43</i>
+              </em>
+              <span class="up" style="color: #999999; margin-top: 15px">UP</span
+              >沐沐秋
+            </div>
+            <div>
+              <img src="../../assets/images/flashSection/5.webp" alt="" />
+              <p>究极社死？？？？</p>
+              <em class="bott-1">
+                <i
+                  class="fa fa-video"
+                  style="color: white; margin-right: 5px"></i>
+                <span style="margin-right: 15px">43.5万</span>
+                <i class="fa fa-mercury"></i>
+                <span>11.1万</span>
+                <i style="margin-left: 24px">01:43</i>
+              </em>
+              <span class="up" style="color: #999999; margin-top: 15px">UP</span
+              >沐沐秋
+            </div>
+          </div>
+        </div>
+        <div class="f-right-wrapper f-r-other-2">
+          <div class="rank">
+            <h2>排行榜</h2>
+          </div>
+
+          <div class="f-right-content">
+            <ul class="rank-content-wrapper">
+              <li>
+                <i class="index">1</i>
+                <p class="rank-content">
+                  军医：我们的部队不需要伤者（拔刀！）不需要伤者
+                </p>
+              </li>
+              <li>
+                <i class="index">2</i>
+                <p class="rank-content">当新冠疫苗进入体内之后</p>
+              </li>
+              <li>
+                <i class="index">3</i>
+                <p class="rank-content">哒 咩 哟 ~</p>
+              </li>
+              <li>
+                <i class="index i-1">4</i>
+                <p class="rank-content">
+                  耗时1个月，全长6.5米。手绘让子弹飞人物
+                </p>
+              </li>
+              <li>
+                <i class="index i-1">5</i>
+                <p class="rank-content">
+                  臭鱼烂虾？隐藏佳作？2021七月新番排雷+导视！！
+                </p>
+              </li>
+              <li>
+                <i class="index i-1">6</i>
+                <p class="rank-content">
+                  世界规模最大3D渲染挑战赛前100名赏析：看艺术家如何演绎砥砺前行的人生
+                </p>
+              </li>
+              <li>
+                <i class="index i-1">7</i>
+                <p class="rank-content">【原神x崩坏3】我不做皇女啦！奥兹！</p>
+              </li>
+              <li>
+                <i class="index i-1">8</i>
+                <p class="rank-content">
+                  火柴人 VS 我的世界系列 第二十四集 郁葱洞穴
+                </p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
       <!-- 主页底部 -->
       <div class="footer"></div>
     </div>
@@ -142,7 +444,7 @@ const videoBoxHandler = async (vid: number) => {
 </template>
 
 <style lang="scss" scoped>
-.container {
+.home-container {
   display: flex;
   flex-direction: column;
   .content {
@@ -241,4 +543,237 @@ const videoBoxHandler = async (vid: number) => {
 //     }
 //   }
 // }
+
+@keyframes floatmove {
+  0% {
+    left: 168px;
+  }
+
+  50% {
+    left: 185px;
+  }
+
+  100% {
+    left: 168px;
+  }
+}
+
+.line {
+  display: block;
+  width: 1px;
+  height: 46px;
+  margin: 0 10px;
+  background-color: #e7e7e7;
+}
+
+/* .t-2 {
+  margin-top: 8px;
+} */
+
+.up {
+  font-size: 12px;
+  transform: scale(0.8);
+  line-height: 10px;
+  font-weight: 600;
+  text-align: center;
+  display: inline-block;
+  width: 17px;
+  height: 10px;
+  border-radius: 3px;
+  color: #dadad5;
+  border: 2px solid #dadad5;
+}
+
+.first-report-section {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  /* height: 244px; */
+  margin: 0 auto;
+  margin-top: 20px;
+  margin-bottom: 40px;
+  /* background-color: skyblue; */
+}
+
+.f-left-wrapper {
+  height: 100%;
+  overflow: hidden;
+  /* margin-right: 21px; */
+  /* background-color: pink; */
+}
+.f-other-2 {
+  height: 414px;
+}
+
+.f-left-header {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.fa-paper-plane {
+  font-size: 25px;
+  color: #ffd778;
+  margin-right: 10px;
+}
+
+.f-left-content {
+  display: flex;
+  overflow: hidden;
+  /* justify-content: space-between; */
+}
+
+.f-left-content img {
+  width: 206px;
+  /* height: 116px; */
+}
+
+.f-left-content div {
+  margin-right: 10px;
+  font-size: 14px;
+  color: #999999;
+  cursor: pointer;
+}
+.f-left-content div p {
+  margin-top: 10px;
+  color: #212121;
+}
+
+.f-right-wrapper {
+  width: 321px;
+  height: 100%;
+  /* background-color: pink; */
+}
+
+.f-r-other-2 {
+  width: 279px;
+}
+
+.f-right-header {
+  position: relative;
+  top: -5px;
+  cursor: pointer;
+  width: 320px;
+  height: 30px;
+  background-color: #f4f4f4;
+  border: 1px solid #e7e7e7;
+  text-align: center;
+  font-size: 12px;
+  line-height: 30px;
+  transition: color 0.2s;
+  margin-bottom: 12px;
+}
+
+.f-right-header:hover {
+  color: #7ecdf4;
+}
+
+.f-right-content img {
+  width: 320px;
+  height: 184px;
+}
+
+.other-1 {
+  flex-wrap: wrap;
+  width: 100%;
+  overflow: hidden;
+}
+
+.other-1 div {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.f-left-content div p {
+  color: #212121;
+  transition: color 0.3s;
+}
+
+.f-left-content div:hover p {
+  color: #00a1d6;
+}
+
+.bott-1 {
+  display: block;
+  position: absolute;
+  width: 186px;
+  height: 25px;
+  line-height: 25px;
+  font-size: 12px;
+  color: white;
+  left: 0;
+  top: 91px;
+  padding: 0 10px;
+  /* background-color: skyblue; */
+  /* background-color: rgba(0, 0, 0, .6); */
+  background-image: linear-gradient(
+    to top,
+    rgba(70, 68, 68, 0.9),
+    rgba(126, 125, 125, 0.6),
+    rgba(255, 255, 255, 0)
+  );
+}
+
+.rank {
+  height: 24px;
+  margin-bottom: 20px;
+  font-size: 20px;
+  line-height: 24px;
+}
+
+.rank-content-wrapper li {
+  width: 320px;
+  display: flex;
+  /* justify-content: space-between; */
+  margin-right: 10px;
+  margin-bottom: 18px;
+}
+
+.index {
+  display: block;
+  width: 18px;
+  height: 18px;
+  color: white;
+  background-color: #00a1d6;
+  line-height: 18px;
+  font-size: 14px;
+  margin-right: 10px;
+  text-align: center;
+}
+
+.rank-content {
+  cursor: pointer;
+  width: 290px;
+  line-height: 20px;
+  font-size: 14px;
+  color: #212121;
+  transition: color 0.3s;
+}
+.rank-content:hover {
+  color: #00a1d6;
+}
+
+.i-1 {
+  background-color: white;
+  color: #9999a6;
+}
+
+.other-1 p {
+  width: 206px;
+  line-height: 20px;
+}
+/*  */
+.f-right-content {
+  position: relative;
+}
+
+.rank-content-wrapper img {
+  width: 112px;
+  height: 149px;
+  margin-right: 10px;
+}
+
+.rank-content-wrapper p {
+  font-size: 14px;
+  width: 198px;
+}
 </style>

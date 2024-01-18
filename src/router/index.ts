@@ -54,6 +54,23 @@ const router = createRouter({
       props: (route) => ({ query: route.query.keyword }),
     },
     {
+      path: '/message',
+      component: () => import('@/pages/message/index.vue'),
+      redirect: { name: 'system' },
+      children: [
+        {
+          name: 'system',
+          path: 'system',
+          component: () => import('@/pages/message/system/index.vue'),
+        },
+      ],
+    },
+    {
+      name: 'manage',
+      path: '/manage',
+      component: () => import('@/pages/manage/index.vue'),
+    },
+    {
       path: '/',
       redirect: 'home',
     },
