@@ -1,8 +1,6 @@
 <script setup lang="ts">
-// @ts-ignore
 import { Document } from '@element-plus/icons-vue';
 // 引入轮播图组件
-// @ts-ignore
 import carousel from './carousel/index.vue';
 import { ElMessage } from 'element-plus';
 import { onMounted, ref } from 'vue';

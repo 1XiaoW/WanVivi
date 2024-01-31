@@ -1,35 +1,3 @@
-<template>
-  <div class="content_comment">
-    <ul>
-      <li class="list-item" v-for="(item, index) in list.result" :key="index">
-        <div class="list_top">
-          <img class="avatar" :src="server_url + item.user_pic" alt="" />
-          <div class="author">
-            <div>
-              {{ item.nickname }}
-              <span style="color: black; font-size: 16px; margin-left: 20px">
-                {{ item.content }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </li>
-    </ul>
-    <!-- 分页器 -->
-    <div v-if="list.total && list.total > limit">
-      <el-pagination
-        v-model:current-page="offset"
-        :page-size="limit"
-        small="small"
-        layout="total, prev, pager, next"
-        prev-text="上一页"
-        next-text="下一页"
-        :total="list.total"
-        @current-change="handleCurrentChange" />
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import type { Comments, CommentsResponseData } from '@/api/video/type.ts';
@@ -68,6 +36,38 @@ const handleCurrentChange = (val: number) => {
   replyList();
 };
 </script>
+
+<template>
+  <div class="content_comment">
+    <ul>
+      <li class="list-item" v-for="(item, index) in list.result" :key="index">
+        <div class="list_top">
+          <img class="avatar" :src="server_url + item.user_pic" alt="" />
+          <div class="author">
+            <div>
+              {{ item.nickname }}
+              <span style="color: black; font-size: 16px; margin-left: 20px">
+                {{ item.content }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <!-- 分页器 -->
+    <div v-if="list.total && list.total > limit">
+      <el-pagination
+        v-model="offset"
+        :page-size="limit"
+        small="small"
+        layout="total, prev, pager, next"
+        prev-text="上一页"
+        next-text="下一页"
+        :total="list.total"
+        @current-change="handleCurrentChange" />
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .content_comment {

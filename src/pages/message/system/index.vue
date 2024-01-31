@@ -10,7 +10,7 @@ onMounted(() => {
 });
 
 const getSystemMsg = async () => {
-  const res = await reqGetMessage('系统通知');
+  const res = await reqGetMessage('系统通知', 1, 1000);
   if (res.status === 200) {
     systemMsgList.value = res.data;
   }
@@ -26,9 +26,7 @@ const getSystemMsg = async () => {
           <p>{{ item.message_publish_time }}</p>
         </div>
       </template>
-      <div>
-        {{ item.message_content }}
-      </div>
+      <div v-html="item.message_content"></div>
     </el-card>
   </div>
 </template>

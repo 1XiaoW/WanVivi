@@ -63,6 +63,7 @@ const useUserStore = defineStore('User', {
     // 更改信息已读状态
     updateMessageState() {
       this.userInfo.unread_message = 0;
+      SET_TOKEN(JSON.stringify(this.userInfo));
     },
   },
 });

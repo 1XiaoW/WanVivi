@@ -69,6 +69,12 @@ const router = createRouter({
       name: 'manage',
       path: '/manage',
       component: () => import('@/pages/manage/index.vue'),
+      children: [
+        {
+          path: 'message',
+          component: () => import('@/pages/manage/message/index.vue'),
+        },
+      ],
     },
     {
       path: '/',
