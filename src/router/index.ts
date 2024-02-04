@@ -74,6 +74,14 @@ const router = createRouter({
           path: 'message',
           component: () => import('@/pages/manage/message/index.vue'),
         },
+        {
+          path: 'review',
+          component: () => import('@/pages/manage/video/reviewList.vue'),
+        },
+        {
+          path: 'audited',
+          component: () => import('@/pages/manage/video/audited.vue'),
+        },
       ],
     },
     {

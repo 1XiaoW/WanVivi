@@ -1,53 +1,42 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import {
-  reqGetMessage,
-  reqDeleteMessage,
-  reqSearchMessage,
-} from '@/api/message';
-import { MessageContent } from '@/api/message/type';
-import createEdit from '../components/create_edit.vue';
 import { ElMessage } from 'element-plus';
+import { reqApprovedVideo, reqChangeVideoState } from '@/api/video/index';
 
 const activeName = ref('first');
-const systemTableData = ref<MessageContent>([]);
-const createEditRef = ref();
+const videoTableData = ref<any>([]);
 const keyword = ref<string>('');
+const dialogVisible = ref(false);
+const videoUrl = ref('');
 
 const total = ref<number>(0);
 const offset = ref<number>(1);
-const limit = ref<number>(2);
+const limit = ref<number>(10);
 
 onMounted(() => {
-  getSystemMsg();
+  getVideoList();
 });
 
-const getSystemMsg = async () => {
-  const res = await reqGetMessage('系统通知', offset.value, limit.value);
+const getVideoList = async () => {
+  const res = await reqApprovedVideo(offset.value, limit.value);
   if (res.status === 200) {
     total.value = res.total;
-    systemTableData.value = res.data;
+    videoTableData.value = res.data;
   }
 };
 
-// 打开发布系统信息弹窗
-const onMsgDialog = () => {
-  createEditRef.value.open();
-};
-
-// 编辑系统信息
-const editSystemMessage = async (row: any) => {
-  createEditRef.value.open(row);
-};
-// 删除系统信息
-const deleteMessage = async (id: any) => {
+// 删除投稿视频
+const remove = async (id: any) => {
   const result = confirm('确认要执行该操作吗？');
   if (result) {
     // 用户点击了确认按钮，执行相应的操作
-    const res = await reqDeleteMessage(id);
+    const res = await reqChangeVideoState(id, 3);
+    console.log(res);
     if (res.status === 200) {
-      getSystemMsg();
-      ElMessage.success('删除消息成功');
+      getVideoList();
+      ElMessage.success('删除成功');
+    } else {
+      ElMessage.error('删除失败');
     }
   } else {
     // 用户点击了取消按钮，不执行操作
@@ -55,23 +44,31 @@ const deleteMessage = async (id: any) => {
 };
 
 const onSearch = async () => {
-  const res = await reqSearchMessage(keyword.value);
-  if (res.status === 200) {
-    systemTableData.value = res.data;
+  if (keyword.value) {
+    const res = videoTableData.value.filter((v: any) => {
+      return v.title.includes(keyword.value);
+    });
+    videoTableData.value = res;
     ElMessage.success('查询成功');
   } else {
-    ElMessage.success('暂无更多');
+    ElMessage.error('请输入要查询的关键字');
   }
 };
 
 // 分页回调函数
 const handleCurrentChange = async (val: number) => {
   offset.value = val;
-  const res = await reqGetMessage('系统通知', offset.value, limit.value);
+  const res = await reqApprovedVideo(offset.value, limit.value);
   if (res.status === 200) {
     total.value = res.total;
-    systemTableData.value = res.data;
+    videoTableData.value = res.data;
   }
+};
+
+// 视频预览函数
+const videoDialog = (row: any) => {
+  videoUrl.value = `http://localhost:5051${row.url}`;
+  dialogVisible.value = true;
 };
 </script>
 
@@ -79,7 +76,7 @@ const handleCurrentChange = async (val: number) => {
   <div class="module-common-wrapped">
     <div class="module-common-content">
       <el-tabs v-model="activeName" class="demo-tabs">
-        <el-tab-pane label="系统消息" name="first">
+        <el-tab-pane label="审核列表" name="first">
           <div class="pane-content">
             <div class="pane-top">
               <div class="module-common-header">
@@ -89,44 +86,41 @@ const handleCurrentChange = async (val: number) => {
                     style="margin-right: 20px"
                     @keyup.enter="onSearch"
                     clearable
-                    placeholder="请输入要查询的主题" />
+                    placeholder="请输入要查询的视频标题" />
                   <el-button type="primary" @click="onSearch">查询</el-button>
-                  <el-button type="primary" @click="getSystemMsg"
+                  <el-button type="primary" @click="getVideoList"
                     >清除查询</el-button
-                  >
-                </div>
-                <div class="button-wrapped">
-                  <el-button type="primary" @click="onMsgDialog"
-                    >发布系统消息</el-button
                   >
                 </div>
               </div>
               <!-- 表格部分 -->
               <div class="module-common-table">
                 <el-table
-                  :data="systemTableData"
+                  :data="videoTableData"
                   :border="true"
                   style="width: 100%">
                   <el-table-column type="index" width="50"></el-table-column>
-                  <el-table-column prop="message_title" label="消息主题" />
+                  <el-table-column prop="title" label="视频标题" />
+                  <el-table-column prop="channel" width="100" label="频道" />
+                  <el-table-column prop="username" width="200" label="作者" />
                   <el-table-column
-                    prop="publisher"
-                    width="200"
-                    label="发布者" />
-                  <el-table-column
-                    prop="message_publish_time"
-                    label="发布时间"
+                    prop="upload_date"
+                    label="投稿时间"
                     width="200">
+                  </el-table-column>
+                  <el-table-column prop="state" width="100" label="状态">
+                    <template #default="{ row }">
+                      <span>{{ row.state !== 2 ? '通过' : '未通过' }}</span>
+                    </template>
                   </el-table-column>
                   <el-table-column label="操作" width="200" fixed="right">
                     <template #default="{ row }">
                       <div>
-                        <el-button
-                          type="success"
-                          @click="editSystemMessage(row)"
-                          >编辑</el-button
+                        <el-button type="primary" @click="videoDialog(row)"
+                          >预览</el-button
                         >
-                        <el-button type="danger" @click="deleteMessage(row.id)"
+
+                        <el-button type="danger" @click="remove(row.video_id)"
                           >删除</el-button
                         >
                       </div>
@@ -148,7 +142,17 @@ const handleCurrentChange = async (val: number) => {
       </el-tabs>
     </div>
   </div>
-  <createEdit ref="createEditRef" @getSystemMsg="getSystemMsg()"></createEdit>
+  <el-dialog v-model="dialogVisible" title="视频预览">
+    <video
+      :src="videoUrl"
+      controls
+      style="width: 720px; height: 405px; object-fit: contain"></video>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogVisible = false">关闭</el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <style lang="scss" scoped>

@@ -21,11 +21,26 @@ enum API {
   VIDEO_BYAUTHORID = '/video/getVideoListByAuthorId/',
   VIDEO_COLLECTBYAUTHORID = '/video/getCollectVideoByAuthorId/',
   VIDEO_SEARCHBYKEYWORD = '/video/getSearchVideo/',
+  VIDEO_STATE = '/video/changeVideoState/',
+  VIDEO_DELETE = '/video/deleteVideo/',
+  VIDEO_APPROVED = '/video/approvedVideos/',
 }
 
 // 获取视频信息(可按频道取值)
-export const reqVideo = (channelId: number = 0) =>
-  request.get<any, VideoResponseData>(API.VIDEO_URL + channelId);
+export const reqVideo = (
+  channelId: number = 0,
+  state: number = 0,
+  offset: number = 1,
+  limit: number = 10
+) =>
+  request.get<any, VideoResponseData>(API.VIDEO_URL, {
+    params: {
+      channelId,
+      state,
+      offset,
+      limit,
+    },
+  });
 
 // 获取视频信息通过id
 export const reqVideoById = (vId: number) =>
@@ -80,7 +95,27 @@ export const reqCollectVideoByAuthorId = (authorId: number) =>
   });
 
 // 通过关键字搜索相关视频
-export const reqSearchByKeyword = (keyword: number) =>
+export const reqSearchByKeyword = (keyword: string) =>
   request.get<any, VideoInfoResponseData>(API.VIDEO_SEARCHBYKEYWORD, {
     params: { keyword },
+  });
+
+// ------------------视频管理------------------
+
+// 更改投稿视频状态 0通过 1审核中 2未通过 3删除
+export const reqChangeVideoState = (videoId: number, state: number) =>
+  request.post<any>(API.VIDEO_STATE, { videoId, state });
+// 删除视频投稿
+export const reqDeleteVideo = (authorId: number) =>
+  request.get<any, VideoInfoResponseData>(API.VIDEO_COLLECTBYAUTHORID, {
+    params: { authorId },
+  });
+
+// 获取审核完的视频信息列表
+export const reqApprovedVideo = (offset: number = 1, limit: number = 10) =>
+  request.get<any, VideoResponseData>(API.VIDEO_APPROVED, {
+    params: {
+      offset,
+      limit,
+    },
   });

@@ -75,6 +75,7 @@ export type VideoContent = VideoList[];
 // 视频接口返回的ts数据类型
 export interface VideoResponseData extends ResponseData {
   data: VideoContent;
+  total: number;
 }
 
 // 一个视频信息接口返回的ts数据类型

@@ -34,18 +34,21 @@ const getChannelInfo = async () => {
 };
 // 获取视频列表
 const getVideoList = async () => {
-  let result: VideoResponseData = await reqVideo();
+  let result: VideoResponseData = await reqVideo(0, 0, 1, 9999);
   if (result.status == 200) {
     const arrIndex: Array<number> = [];
     const arrformat: Array<any> = [];
-    while (arrIndex.length < 6) {
-      let random = Math.floor(Math.random() * result.data.length);
-      if (!arrIndex.includes(random)) {
-        arrIndex.push(random);
-        arrformat.push(result.data[random]);
+    if (result.data.length <= 6) videoArr.value = result.data;
+    else {
+      while (result.data.length >= 6 && arrIndex.length < 6) {
+        let random = Math.floor(Math.random() * result.data.length);
+        if (!arrIndex.includes(random)) {
+          arrIndex.push(random);
+          arrformat.push(result.data[random]);
+        }
       }
+      videoArr.value = arrformat;
     }
-    videoArr.value = arrformat;
   }
 };
 

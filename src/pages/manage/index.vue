@@ -13,10 +13,16 @@ import { House, Tools } from '@element-plus/icons-vue';
             <el-icon><House /></el-icon>
             <span>消息管理</span>
           </el-menu-item>
-          <el-menu-item index="setup">
-            <el-icon><Tools /></el-icon>
-            <span>系统设置</span>
-          </el-menu-item>
+          <el-sub-menu index="setup">
+            <template #title>
+              <el-icon><Tools /></el-icon>
+              <span>视频管理</span>
+            </template>
+            <el-menu-item-group title="视频审核">
+              <el-menu-item index="/manage/review">审核列表</el-menu-item>
+              <el-menu-item index="/manage/audited">已审核</el-menu-item>
+            </el-menu-item-group>
+          </el-sub-menu>
         </el-menu>
       </el-aside>
       <el-container>
