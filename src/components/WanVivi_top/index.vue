@@ -7,15 +7,15 @@ import { useRouter } from 'vue-router';
 import useUserStore from '@/store/modules/user';
 import search from './search/index.vue';
 
-let userStore = useUserStore();
-let server_url = import.meta.env.VITE_SERVER_URL;
+const userStore = useUserStore();
+const server_url = import.meta.env.VITE_SERVER_URL;
 
 const props = defineProps(['specialPage']);
 
-let vidRef = ref();
+const vidRef = ref();
 let x: number = 0;
 let _x = null;
-let isFixed = ref<boolean>(false);
+const isFixed = ref<boolean>(false);
 const $router = useRouter();
 
 onMounted(() => {
@@ -158,7 +158,9 @@ const goMessage = () => {
                     <el-dropdown-item @click="$router.push('/userInfo')"
                       >个人中心</el-dropdown-item
                     >
-                    <el-dropdown-item @click="$router.push('/manage')"
+                    <el-dropdown-item
+                      v-if="userStore.userInfo.role"
+                      @click="$router.push('/manage')"
                       >管理中心</el-dropdown-item
                     >
                     <el-dropdown-item @click="logout"

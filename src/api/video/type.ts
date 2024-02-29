@@ -37,6 +37,7 @@ export interface VideoInfo {
   upload_date: Date;
   view_count: number;
   like_count: number;
+  collect_count: number;
   review_count: number;
   author_id: number;
   channel_id: number;
@@ -46,7 +47,7 @@ export interface VideoInfo {
 
 // 评论result里的数据
 export interface CommentsResult {
-  com_id: number;
+  com_id: string;
   aut_id: number;
   like_count: number;
   reply_count: number;

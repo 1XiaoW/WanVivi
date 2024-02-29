@@ -21,6 +21,10 @@ const offset = ref<number>(1);
 const limit = ref<number>(2);
 const vId = props.vId;
 const commentText = ref();
+const replyText = ref();
+const reply = ref<boolean>(false);
+const replyMark = ref();
+const replyRef = ref();
 
 onMounted(() => {
   pageY();
@@ -53,7 +57,7 @@ const lazyLoad = async () => {
     await new Promise((t) => {
       setTimeout(() => {
         t(1);
-      }, 2000);
+      }, 1400);
     });
     let res: CommentsResponseData = await reqVideoComment(
       'v',
@@ -81,9 +85,11 @@ const onPostComment = async () => {
     vId,
     commentText: commentText.value,
   };
-  const res = await reqVideoCommentPost(params);
+  const res: any = await reqVideoCommentPost(params);
   if (res.status === 200) {
-    lazyLoad();
+    // lazyLoad();
+    res.data.pubdate = '最新';
+    cList.unshift(res.data);
     commentText.value = '';
     ElMessage({
       type: 'success',
@@ -95,6 +101,41 @@ const onPostComment = async () => {
       message: res.message,
     });
   }
+};
+
+// 评论回复
+const onPostReply = async () => {
+  let params = {
+    userId: useStore.userInfo.userId,
+    vId,
+    contentType: 'c',
+    com_id: replyMark.value,
+    commentText: replyText.value,
+  };
+  const res: any = await reqVideoCommentPost(params);
+  if (res.status === 200) {
+    // lazyLoad();
+    await replyRef.value[0].replyList();
+    replyText.value = '';
+    ElMessage({
+      type: 'success',
+      message: res.message,
+    });
+  } else {
+    ElMessage({
+      type: 'error',
+      message: res.message,
+    });
+  }
+};
+
+// 显示回复评论
+const openReply = async (com_id: string) => {
+  // console.log(com_id);
+  // console.log('object');
+  replyText.value = '';
+  reply.value = true;
+  replyMark.value = com_id;
 };
 </script>
 
@@ -137,8 +178,36 @@ const onPostComment = async () => {
           <div class="list_bottom">
             <div class="content">
               {{ item.content }}
-              <div class="content_time">{{ item.pubdate }}</div>
-              <Reply :vId="vId" :comId="item.com_id" />
+              <div class="content_time">
+                {{ item.pubdate }}
+                <span @click="openReply(item.com_id)">回复</span>
+              </div>
+              <Reply ref="replyRef" :vId="vId" :comId="item.com_id" />
+              <div
+                class="comment_post"
+                style="margin-top: 10px"
+                v-show="reply && replyMark === item.com_id">
+                <div class="left_avatar">
+                  <el-avatar :src="server_url + useStore.userInfo.avatar" />
+                </div>
+                <div class="middle_content">
+                  <el-input
+                    :autosize="{ minRows: 2, maxRows: 4 }"
+                    v-model="replyText"
+                    size="small"
+                    type="textarea"
+                    resize="none"
+                    placeholder="尊重是评论打动人心的入场券" />
+                </div>
+                <div class="right_post">
+                  <el-button
+                    type="primary"
+                    style="height: 52px"
+                    @click="onPostReply"
+                    >发布</el-button
+                  >
+                </div>
+              </div>
             </div>
           </div>
         </li>

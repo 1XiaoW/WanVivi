@@ -15,15 +15,27 @@
 <script setup lang="ts">
 // @ts-ignore
 import autofit from './utils/autofit.js';
+import useUserStore from '@/store/modules/user';
 import { onMounted } from 'vue';
-import { GET_TOKEN, REMOVE_TOKEN } from './utils/user';
+import { GET_TOKEN } from './utils/user';
 import request from '@/utils/request';
-onMounted(async () => {
+
+let userStore = useUserStore();
+
+const loading = async () => {
   if (GET_TOKEN()) {
-    const res = await request.get('/auth');
-    if (res.status === 200) return;
-    else REMOVE_TOKEN();
+    try {
+      await request.get('/auth');
+    } catch (err) {
+      userStore.logout();
+    }
+  } else {
+    console.log('没有token');
   }
+};
+loading();
+
+onMounted(async () => {
   // autofit.init({ dh: 768, dw: 1366, el: '#app', resize: true });
 });
 </script>

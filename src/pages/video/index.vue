@@ -7,6 +7,7 @@ import {
   reqVideoById,
   reqVideoLike,
   reqVideoCollect,
+  reqVideoCommentTotal,
 } from '@/api/video/index.ts';
 import { useRoute } from 'vue-router';
 import { VideoInfo, LikeAndCollect } from '@/api/video/type.ts';
@@ -29,6 +30,7 @@ let vInfo = ref<VideoInfo>({
   upload_date: new Date(),
   view_count: 0,
   like_count: 0,
+  collect_count: 0,
   review_count: 0,
   author_id: 0,
   channel_id: 0,
@@ -46,8 +48,10 @@ onMounted(() => {
 });
 
 const videoInfo = async () => {
-  const result = await reqVideoById(vId);
-  if (result.status == 200) vInfo.value = result.data[0];
+  const res = await reqVideoById(vId);
+  const total = await reqVideoCommentTotal(vId);
+  vInfo.value.review_count = total as any;
+  if (res.status == 200) vInfo.value = res.data[0];
 };
 
 // 视频上传时间格式化
@@ -93,7 +97,7 @@ const onCollect = async () => {
 
 <template>
   <div class="video_container">
-    <WanViviTop />
+    <WanViviTop :specialPage="true" />
     <div class="content">
       <!-- 视频标题 -->
       <el-row justify="center">
@@ -197,7 +201,7 @@ const onCollect = async () => {
                   fill="currentColor"></path>
               </svg>
             </div>
-            <span>收藏功能暂时未开发</span>
+            <span>{{ pNumHandler(vInfo.collect_count) }}</span>
           </div>
         </div>
         <div class="video_brief">{{ vInfo.brief }}</div>

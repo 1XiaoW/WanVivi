@@ -16,7 +16,7 @@ const keyword = ref<string>('');
 
 const total = ref<number>(0);
 const offset = ref<number>(1);
-const limit = ref<number>(2);
+const limit = ref<number>(10);
 
 onMounted(() => {
   getSystemMsg();

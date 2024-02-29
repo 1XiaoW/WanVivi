@@ -1,7 +1,7 @@
 // 定义用户相关的仓库
 import { defineStore } from 'pinia';
 
-import { reqUserLogin } from '@/api/user';
+import { reqUserLogin, reqChangeReadMsgState } from '@/api/user';
 import { DataParameter } from '@/api/user/type';
 
 import { GET_TOKEN, SET_TOKEN, REMOVE_TOKEN } from '@/utils/user';
@@ -11,6 +11,7 @@ type userInfo = {
   username: string;
   token: string;
   unread_message: number;
+  role: string;
 };
 const useUserStore = defineStore('User', {
   state: () => {
@@ -25,7 +26,7 @@ const useUserStore = defineStore('User', {
     async userLogin(dataParam: DataParameter) {
       //登录请求
       let result = await reqUserLogin(dataParam);
-      console.log(result);
+      // console.log(result);
       if (result.status == 200) {
         this.userInfo = result.data;
         //本地存储持久化存储用户信息
@@ -46,6 +47,7 @@ const useUserStore = defineStore('User', {
         userId: NaN,
         avatar: '',
         unread_message: NaN,
+        role: '',
       };
       //清空本地存储的数据
       REMOVE_TOKEN();
@@ -61,8 +63,9 @@ const useUserStore = defineStore('User', {
     },
 
     // 更改信息已读状态
-    updateMessageState() {
+    async updateMessageState() {
       this.userInfo.unread_message = 0;
+      await reqChangeReadMsgState(this.userInfo.userId);
       SET_TOKEN(JSON.stringify(this.userInfo));
     },
   },

@@ -24,6 +24,7 @@ enum API {
   VIDEO_STATE = '/video/changeVideoState/',
   VIDEO_DELETE = '/video/deleteVideo/',
   VIDEO_APPROVED = '/video/approvedVideos/',
+  VIDEO_COMMENTS_TOTAL = '/video/getVideoCommentTotal/',
 }
 
 // 获取视频信息(可按频道取值)
@@ -100,6 +101,10 @@ export const reqSearchByKeyword = (keyword: string) =>
     params: { keyword },
   });
 
+// 获取当前视频的评论数
+export const reqVideoCommentTotal = (vId: number) =>
+  request.post<any>(API.VIDEO_COMMENTS_TOTAL, { vId });
+
 // ------------------视频管理------------------
 
 // 更改投稿视频状态 0通过 1审核中 2未通过 3删除
@@ -112,10 +117,15 @@ export const reqDeleteVideo = (authorId: number) =>
   });
 
 // 获取审核完的视频信息列表
-export const reqApprovedVideo = (offset: number = 1, limit: number = 10) =>
+export const reqApprovedVideo = (
+  offset: number = 1,
+  limit: number = 10,
+  state?: string
+) =>
   request.get<any, VideoResponseData>(API.VIDEO_APPROVED, {
     params: {
       offset,
       limit,
+      state,
     },
   });

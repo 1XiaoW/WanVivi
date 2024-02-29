@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { ElMessage } from 'element-plus';
-import { reqApprovedVideo, reqChangeVideoState } from '@/api/video/index';
+import {
+  reqApprovedVideo,
+  reqChangeVideoState,
+  reqSearchByKeyword,
+} from '@/api/video/index';
 
 const activeName = ref('first');
 const videoTableData = ref<any>([]);
 const keyword = ref<string>('');
 const dialogVisible = ref(false);
 const videoUrl = ref('');
+const select = ref('');
 
 const total = ref<number>(0);
 const offset = ref<number>(1);
@@ -20,6 +25,8 @@ onMounted(() => {
 const getVideoList = async () => {
   const res = await reqApprovedVideo(offset.value, limit.value);
   if (res.status === 200) {
+    keyword.value = '';
+    select.value = '';
     total.value = res.total;
     videoTableData.value = res.data;
   }
@@ -45,10 +52,8 @@ const remove = async (id: any) => {
 
 const onSearch = async () => {
   if (keyword.value) {
-    const res = videoTableData.value.filter((v: any) => {
-      return v.title.includes(keyword.value);
-    });
-    videoTableData.value = res;
+    const res = await reqSearchByKeyword(keyword.value);
+    videoTableData.value = res.data;
     ElMessage.success('查询成功');
   } else {
     ElMessage.error('请输入要查询的关键字');
@@ -58,7 +63,7 @@ const onSearch = async () => {
 // 分页回调函数
 const handleCurrentChange = async (val: number) => {
   offset.value = val;
-  const res = await reqApprovedVideo(offset.value, limit.value);
+  const res = await reqApprovedVideo(offset.value, limit.value, select.value);
   if (res.status === 200) {
     total.value = res.total;
     videoTableData.value = res.data;
@@ -69,6 +74,14 @@ const handleCurrentChange = async (val: number) => {
 const videoDialog = (row: any) => {
   videoUrl.value = `http://localhost:5051${row.url}`;
   dialogVisible.value = true;
+};
+
+const dataFilter = async () => {
+  const res = await reqApprovedVideo(offset.value, limit.value, select.value);
+  if (res.status === 200) {
+    total.value = res.total;
+    videoTableData.value = res.data;
+  }
 };
 </script>
 
@@ -88,8 +101,18 @@ const videoDialog = (row: any) => {
                     clearable
                     placeholder="请输入要查询的视频标题" />
                   <el-button type="primary" @click="onSearch">查询</el-button>
+                  <el-select
+                    v-model="select"
+                    filterable
+                    :filter-method="dataFilter"
+                    clearable
+                    placeholder="状态"
+                    style="width: 240px; margin: 0 20px">
+                    <el-option label="通过" value="0" />
+                    <el-option label="未通过" value="2" />
+                  </el-select>
                   <el-button type="primary" @click="getVideoList"
-                    >清除查询</el-button
+                    >恢复默认</el-button
                   >
                 </div>
               </div>

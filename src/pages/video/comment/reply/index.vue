@@ -5,7 +5,6 @@ import { reqVideoComment } from '@/api/video/index.ts';
 const server_url = import.meta.env.VITE_SERVER_URL;
 
 let props = defineProps(['vId', 'comId']);
-
 let list = ref<Comments>({
   total: 0,
   page: 0,
@@ -35,6 +34,8 @@ const handleCurrentChange = (val: number) => {
   offset.value = val;
   replyList();
 };
+
+defineExpose({ replyList });
 </script>
 
 <template>
@@ -45,10 +46,13 @@ const handleCurrentChange = (val: number) => {
           <img class="avatar" :src="server_url + item.user_pic" alt="" />
           <div class="author">
             <div>
-              {{ item.nickname }}
+              <span>
+                {{ item.nickname ? item.nickname : item.username }}
+              </span>
               <span style="color: black; font-size: 16px; margin-left: 20px">
                 {{ item.content }}
               </span>
+              <div class="time">{{ item.pubdate }}</div>
             </div>
           </div>
         </div>
@@ -93,11 +97,6 @@ const handleCurrentChange = (val: number) => {
         font-weight: 500;
         color: #61666d;
         font-size: 13px;
-        .content {
-          margin-left: 10px;
-          font-size: 16px;
-          color: black;
-        }
       }
     }
     .list_bottom {

@@ -23,6 +23,8 @@ enum API {
   MODIFYAVATAR_URL = '/user/auth/userAvatar/',
   // 修改用户密码接口
   MODIFYPASSWORD_URL = '/user/auth/userPwd/',
+  // 更改用户是否阅读消息状态
+  READMSGSTATE_URL = '/user/auth/readMsgState/',
 }
 
 export const reqUserLogin = (data: DataParameter) =>
@@ -48,3 +50,6 @@ export const reqModifyAvatar = (id: number, formData: FormData) =>
 
 export const reqModifyPassword = (id: number, pwd: object) =>
   request.put<any, ResponseData>(API.MODIFYPASSWORD_URL + id, pwd);
+
+export const reqChangeReadMsgState = (id: number) =>
+  request.put<any, ResponseData>(API.READMSGSTATE_URL + id);
