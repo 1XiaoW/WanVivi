@@ -280,6 +280,15 @@ const openReply = async (com_id: string) => {
           border-bottom: 1px solid #ccc;
           word-break: break-all;
           overflow: hidden;
+          .content_time {
+            color: #61666d;
+            font-size: 13px;
+            span {
+              margin-left: 20px;
+              cursor: pointer;
+              color: #9499a0;
+            }
+          }
         }
       }
     }

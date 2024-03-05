@@ -27,7 +27,7 @@ const getVideoList = async () => {
 
 // 审核通过函数
 const Approved = async (row: any) => {
-  const res = await reqChangeVideoState(row.video_id, 2);
+  const res = await reqChangeVideoState(row.video_id, 0);
   if (res.status === 200) {
     getVideoList();
     ElMessage.success('完成操作');

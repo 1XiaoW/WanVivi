@@ -25,6 +25,7 @@ enum API {
   VIDEO_DELETE = '/video/deleteVideo/',
   VIDEO_APPROVED = '/video/approvedVideos/',
   VIDEO_COMMENTS_TOTAL = '/video/getVideoCommentTotal/',
+  VIDEO_HOT = '/video/hot',
 }
 
 // 获取视频信息(可按频道取值)
@@ -46,6 +47,10 @@ export const reqVideo = (
 // 获取视频信息通过id
 export const reqVideoById = (vId: number) =>
   request.get<any, VideoInfoResponseData>(API.VIDEOBYID + `?vId=${vId}`);
+
+// 获取播放量前5视频
+export const reqHotVideo = () =>
+  request.get<any, VideoInfoResponseData>(API.VIDEO_HOT);
 
 // 获取视频评论
 export const reqVideoComment = (
