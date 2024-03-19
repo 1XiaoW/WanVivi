@@ -120,6 +120,9 @@ const submitupload = async () => {
           loading.value = false;
           activeIndex.value = '3';
           ElMessage.success('视频投稿成功');
+        } else {
+          ElMessage.error('服务器错误');
+          loading.value = false;
         }
       }
     } else {

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { Document } from '@element-plus/icons-vue';
+// import { Document } from '@element-plus/icons-vue';
 // 引入轮播图组件
 import carousel from './carousel/index.vue';
 import { ElMessage } from 'element-plus';
-import { onMounted, ref } from 'vue';
-import { reqVideo } from '@/api/video/index.ts';
+import { onMounted, ref, toRef } from 'vue';
+import { reqVideo, reqFiveVideosOfChannel } from '@/api/video/index.ts';
 import { useRouter } from 'vue-router';
 import type { VideoResponseData, VideoContent } from '@/api/video/type.ts';
 // 以下代码有pinia接管
@@ -15,6 +15,14 @@ import useChannelStore from '@/store/modules/channel.ts';
 let videoArr = ref<VideoContent>([]);
 let $router = useRouter();
 let useChannel = useChannelStore();
+const channelVideosList = ref<Array<VideoContent>>([]);
+
+const animationRef = ref();
+const filmRef = ref();
+const musicRef = ref();
+const danceRef = ref();
+const matchRef = ref();
+
 // 组件挂载完毕发送一次请求
 onMounted(() => {
   getChannelInfo();
@@ -34,6 +42,11 @@ const getChannelInfo = async () => {
 };
 // 获取视频列表
 const getVideoList = async () => {
+  const fiveVideos = await reqFiveVideosOfChannel([
+    1029, 1040, 1027, 1031, 1039,
+  ]);
+  channelVideosList.value = fiveVideos.data;
+
   let result: VideoResponseData = await reqVideo(0, 0, 1, 9999);
   if (result.status == 200) {
     const arrIndex: Array<number> = [];
@@ -56,17 +69,51 @@ const getVideoList = async () => {
 const videoBoxHandler = async (vid: number) => {
   $router.push({ path: '/video', query: { videoId: vid } });
 };
+
+const scrollPosition = (plate: number) => {
+  let plateRef;
+  switch (plate) {
+    case 0:
+      plateRef = animationRef.value;
+      break;
+    case 1:
+      plateRef = filmRef.value;
+      break;
+    case 2:
+      plateRef = musicRef.value;
+      break;
+    case 3:
+      plateRef = danceRef.value;
+      break;
+    case 4:
+      plateRef = matchRef.value;
+      break;
+  }
+  const targetPosition =
+    plateRef.getBoundingClientRect().top + window.scrollY - 64;
+  window.scrollTo({
+    top: targetPosition,
+    behavior: 'smooth',
+  });
+};
 </script>
 
 <template>
   <div class="home-container">
-    <WanViviTop />
+    <WanViviTop @scroll-position="scrollPosition" />
     <div class="content">
       <!-- 主页顶部 -->
       <div class="top">
         <!-- 左侧大分类 -->
         <ul>
           <li>
+            <img
+              src="../../assets/images/welcome.gif"
+              alt=""
+              style="width: 100px" />
+            <span>欢迎访问</span>
+          </li>
+          <!-- <li>
             <div class="avatar"></div>
             <span>动态</span>
           </li>
@@ -87,7 +134,7 @@ const videoBoxHandler = async (vid: number) => {
               </svg>
             </div>
             <span>热门</span>
-          </li>
+          </li> -->
           <!-- <li>
           <div class="avatar"></div>
           <span>频道</span>
@@ -108,12 +155,13 @@ const videoBoxHandler = async (vid: number) => {
         <div class="line"></div>
         <!-- 右侧其他栏目 -->
         <div class="top_right">
-          <el-button class="button" link :icon="Document"> 专栏 </el-button>
+          <img src="../../assets/images/logo.jpg" alt="" />
+          <!-- <el-button class="button" link :icon="Document"> 专栏 </el-button>
           <el-button class="button" link :icon="Document"> 活动 </el-button>
           <el-button class="button" link :icon="Document"> 社区中心 </el-button>
           <el-button class="button" link :icon="Document"> 直播 </el-button>
           <el-button class="button" link :icon="Document"> 课堂 </el-button>
-          <el-button class="button" link :icon="Document"> 新歌热榜 </el-button>
+          <el-button class="button" link :icon="Document"> 新歌热榜 </el-button> -->
         </div>
       </div>
       <!-- 主页内容区-第一部分 -->
@@ -191,252 +239,76 @@ const videoBoxHandler = async (vid: number) => {
       </div>
 
       <!-- 动画板块 -->
-      <div class="first-report-section">
-        <div class="f-left-wrapper f-other-2">
-          <div class="f-left-header">
-            <div
-              class="fab fa-centercode"
-              style="color: #9796ed; font-size: 25px; margin-right: 10px"></div>
-            <div style="font-size: 20px; margin-right: 20px">动画</div>
-          </div>
-          <div class="f-left-content other-1">
-            <div>
-              <img src="../../assets/images/flashSection/1.webp" alt="" />
-              <p style="text-overflow: ellipsis">
-                这么漂亮的居然是哥哥的女朋友？
-              </p>
-              <em class="bott-1">
-                <i
-                  class="fa fa-video"
-                  style="color: white; margin-right: 5px"></i>
-                <span style="margin-right: 15px">43.5万</span>
-                <i class="fa fa-mercury"></i>
-                <span>11.1万</span>
-                <i style="margin-left: 24px">01:43</i>
-              </em>
-              <span class="up" style="color: #999999; margin-top: 15px">UP</span
-              >沐沐秋
-            </div>
-            <div>
-              <img src="../../assets/images/flashSection/2.webp" alt="" />
-              <p>无声铃鹿卷土重来</p>
-              <em class="bott-1">
-                <i
-                  class="fa fa-video"
-                  style="color: white; margin-right: 5px"></i>
-                <span style="margin-right: 15px">43.5万</span>
-                <i class="fa fa-mercury"></i>
-                <span>11.1万</span>
-                <i style="margin-left: 24px">01:43</i>
-              </em>
-              <span class="up" style="color: #999999; margin-top: 15px">UP</span
-              >沐沐秋
-            </div>
-            <div>
-              <img src="../../assets/images/flashSection/3.webp" alt="" />
-              <p>此视频可能会拯救你的视力</p>
-              <em class="bott-1">
-                <i
-                  class="fa fa-video"
-                  style="color: white; margin-right: 5px"></i>
-                <span style="margin-right: 15px">43.5万</span>
-                <i class="fa fa-mercury"></i>
-                <span>11.1万</span>
-                <i style="margin-left: 24px">01:43</i>
-              </em>
-              <span class="up" style="color: #999999; margin-top: 15px">UP</span
-              >沐沐秋
-            </div>
-            <div>
-              <img src="../../assets/images/flashSection/4.webp" alt="" />
-              <p>某虚拟主播竟然？</p>
-              <em class="bott-1">
-                <i
-                  class="fa fa-video"
-                  style="color: white; margin-right: 5px"></i>
-                <span style="margin-right: 15px">43.5万</span>
-                <i class="fa fa-mercury"></i>
-                <span>11.1万</span>
-                <i style="margin-left: 24px">01:43</i>
-              </em>
-              <span class="up" style="color: #999999; margin-top: 15px">UP</span
-              >沐沐秋
-            </div>
-            <div>
-              <img src="../../assets/images/flashSection/5.webp" alt="" />
-              <p>究极社死？？？？</p>
-              <em class="bott-1">
-                <i
-                  class="fa fa-video"
-                  style="color: white; margin-right: 5px"></i>
-                <span style="margin-right: 15px">43.5万</span>
-                <i class="fa fa-mercury"></i>
-                <span>11.1万</span>
-                <i style="margin-left: 24px">01:43</i>
-              </em>
-              <span class="up" style="color: #999999; margin-top: 15px">UP</span
-              >沐沐秋
-            </div>
-            <div>
-              <img src="../../assets/images/flashSection/6.webp" alt="" />
-              <p>史诗级刀子片？时光代理人？？</p>
-              <em class="bott-1">
-                <i
-                  class="fa fa-video"
-                  style="color: white; margin-right: 5px"></i>
-                <span style="margin-right: 15px">43.5万</span>
-                <i class="fa fa-mercury"></i>
-                <span>11.1万</span>
-                <i style="margin-left: 24px">01:43</i>
-              </em>
-              <span class="up" style="color: #999999; margin-top: 15px">UP</span
-              >沐沐秋
-            </div>
-            <div>
-              <img src="../../assets/images/flashSection/7.webp" alt="" />
-              <p>耗时半年！up主用中文填词的</p>
-              <em class="bott-1">
-                <i
-                  class="fa fa-video"
-                  style="color: white; margin-right: 5px"></i>
-                <span style="margin-right: 15px">43.5万</span>
-                <i class="fa fa-mercury"></i>
-                <span>11.1万</span>
-                <i style="margin-left: 24px">01:43</i>
-              </em>
-              <span class="up" style="color: #999999; margin-top: 15px">UP</span
-              >沐沐秋
-            </div>
-            <div>
-              <img src="../../assets/images/flashSection/8.webp" alt="" />
-              <p>JOJO的奇妙冒险</p>
-              <em class="bott-1">
-                <i
-                  class="fa fa-video"
-                  style="color: white; margin-right: 5px"></i>
-                <span style="margin-right: 15px">43.5万</span>
-                <i class="fa fa-mercury"></i>
-                <span>11.1万</span>
-                <i style="margin-left: 24px">01:43</i>
-              </em>
-              <span class="up" style="color: #999999; margin-top: 15px">UP</span
-              >沐沐秋
-            </div>
-            <div>
-              <img src="../../assets/images/flashSection/2.webp" alt="" />
-              <p>无声铃鹿卷土重来</p>
-              <em class="bott-1">
-                <i
-                  class="fa fa-video"
-                  style="color: white; margin-right: 5px"></i>
-                <span style="margin-right: 15px">43.5万</span>
-                <i class="fa fa-mercury"></i>
-                <span>11.1万</span>
-                <i style="margin-left: 24px">01:43</i>
-              </em>
-              <span class="up" style="color: #999999; margin-top: 15px">UP</span
-              >沐沐秋
-            </div>
-            <div>
-              <img src="../../assets/images/flashSection/3.webp" alt="" />
-              <p>此视频可能会拯救你的视力</p>
-              <em class="bott-1">
-                <i
-                  class="fa fa-video"
-                  style="color: white; margin-right: 5px"></i>
-                <span style="margin-right: 15px">43.5万</span>
-                <i class="fa fa-mercury"></i>
-                <span>11.1万</span>
-                <i style="margin-left: 24px">01:43</i>
-              </em>
-              <span class="up" style="color: #999999; margin-top: 15px">UP</span
-              >沐沐秋
-            </div>
-            <div>
-              <img src="../../assets/images/flashSection/4.webp" alt="" />
-              <p>某虚拟主播竟然？</p>
-              <em class="bott-1">
-                <i
-                  class="fa fa-video"
-                  style="color: white; margin-right: 5px"></i>
-                <span style="margin-right: 15px">43.5万</span>
-                <i class="fa fa-mercury"></i>
-                <span>11.1万</span>
-                <i style="margin-left: 24px">01:43</i>
-              </em>
-              <span class="up" style="color: #999999; margin-top: 15px">UP</span
-              >沐沐秋
-            </div>
-            <div>
-              <img src="../../assets/images/flashSection/5.webp" alt="" />
-              <p>究极社死？？？？</p>
-              <em class="bott-1">
-                <i
-                  class="fa fa-video"
-                  style="color: white; margin-right: 5px"></i>
-                <span style="margin-right: 15px">43.5万</span>
-                <i class="fa fa-mercury"></i>
-                <span>11.1万</span>
-                <i style="margin-left: 24px">01:43</i>
-              </em>
-              <span class="up" style="color: #999999; margin-top: 15px">UP</span
-              >沐沐秋
-            </div>
-          </div>
-        </div>
-        <div class="f-right-wrapper f-r-other-2">
-          <div class="rank">
-            <h2>排行榜</h2>
-          </div>
-
-          <div class="f-right-content">
-            <ul class="rank-content-wrapper">
-              <li>
-                <i class="index">1</i>
-                <p class="rank-content">
-                  军医：我们的部队不需要伤者（拔刀！）不需要伤者
-                </p>
-              </li>
-              <li>
-                <i class="index">2</i>
-                <p class="rank-content">当新冠疫苗进入体内之后</p>
-              </li>
-              <li>
-                <i class="index">3</i>
-                <p class="rank-content">哒 咩 哟 ~</p>
-              </li>
-              <li>
-                <i class="index i-1">4</i>
-                <p class="rank-content">
-                  耗时1个月，全长6.5米。手绘让子弹飞人物
-                </p>
-              </li>
-              <li>
-                <i class="index i-1">5</i>
-                <p class="rank-content">
-                  臭鱼烂虾？隐藏佳作？2021七月新番排雷+导视！！
-                </p>
-              </li>
-              <li>
-                <i class="index i-1">6</i>
-                <p class="rank-content">
-                  世界规模最大3D渲染挑战赛前100名赏析：看艺术家如何演绎砥砺前行的人生
-                </p>
-              </li>
-              <li>
-                <i class="index i-1">7</i>
-                <p class="rank-content">【原神x崩坏3】我不做皇女啦！奥兹！</p>
-              </li>
-              <li>
-                <i class="index i-1">8</i>
-                <p class="rank-content">
-                  火柴人 VS 我的世界系列 第二十四集 郁葱洞穴
-                </p>
-              </li>
-            </ul>
+      <div class="animation" ref="animationRef">
+        <div class="animation-title">动画</div>
+        <div class="animation-content">
+          <div
+            v-for="(item, index) in channelVideosList[0]"
+            :key="index"
+            class="videoBox_item">
+            <VideoBox
+              :videoInfo="item"
+              @click="videoBoxHandler(item.video_id)" />
           </div>
         </div>
       </div>
+      <!-- 影视板块 -->
+      <div class="film" ref="filmRef">
+        <div class="film-title">影视</div>
+        <div class="film-content">
+          <div
+            v-for="(item, index) in channelVideosList[1]"
+            :key="index"
+            class="videoBox_item">
+            <VideoBox
+              :videoInfo="item"
+              @click="videoBoxHandler(item.video_id)" />
+          </div>
+        </div>
+      </div>
+      <!-- 音乐板块 -->
+      <div class="music" ref="musicRef">
+        <div class="music-title">音乐</div>
+        <div class="music-content">
+          <div
+            v-for="(item, index) in channelVideosList[2]"
+            :key="index"
+            class="videoBox_item">
+            <VideoBox
+              :videoInfo="item"
+              @click="videoBoxHandler(item.video_id)" />
+          </div>
+        </div>
+      </div>
+      <!-- 舞蹈板块 -->
+      <div class="dance" ref="danceRef">
+        <div class="dance-title">舞蹈</div>
+        <div class="dance-content">
+          <div
+            v-for="(item, index) in channelVideosList[3]"
+            :key="index"
+            class="videoBox_item">
+            <VideoBox
+              :videoInfo="item"
+              @click="videoBoxHandler(item.video_id)" />
+          </div>
+        </div>
+      </div>
+      <!-- 赛事板块 -->
+      <div class="match" ref="matchRef">
+        <div class="match-title">赛事</div>
+        <div class="match-content">
+          <div
+            v-for="(item, index) in channelVideosList[4]"
+            :key="index"
+            class="videoBox_item">
+            <VideoBox
+              :videoInfo="item"
+              @click="videoBoxHandler(item.video_id)" />
+          </div>
+        </div>
+      </div>
+
       <!-- 主页底部 -->
       <div class="footer"></div>
     </div>
@@ -445,6 +317,21 @@ const videoBoxHandler = async (vid: number) => {
 </template>
 
 <style lang="scss" scoped>
+@mixin public-sector-title {
+  font-size: 24px;
+  color: rgba(0, 0, 0, 0.8);
+  letter-spacing: 1px;
+  line-height: 32px;
+  margin: 10px 0;
+}
+@mixin public-sector-content {
+  display: grid;
+  grid-column: span 5;
+  grid-template-columns: repeat(5, 1fr);
+  position: relative;
+  width: 100%;
+}
+
 .home-container {
   display: flex;
   flex-direction: column;
@@ -509,6 +396,10 @@ const videoBoxHandler = async (vid: number) => {
         width: 220px;
         display: flex;
         flex-wrap: wrap;
+        img {
+          width: 200px;
+          height: 80px;
+        }
         .button {
           height: 28px;
           margin: 0;
@@ -776,5 +667,52 @@ const videoBoxHandler = async (vid: number) => {
 .rank-content-wrapper p {
   font-size: 14px;
   width: 198px;
+}
+
+.animation {
+  margin-top: 60px;
+  .animation-title {
+    @include public-sector-title();
+  }
+  .animation-content {
+    @include public-sector-content();
+  }
+}
+.film {
+  margin-top: 60px;
+  .film-title {
+    @include public-sector-title();
+  }
+  .film-content {
+    @include public-sector-content();
+  }
+}
+.music {
+  margin-top: 60px;
+  .music-title {
+    @include public-sector-title();
+  }
+  .music-content {
+    @include public-sector-content();
+  }
+}
+.dance {
+  margin-top: 60px;
+  .dance-title {
+    @include public-sector-title();
+  }
+  .dance-content {
+    @include public-sector-content();
+  }
+}
+
+.match {
+  margin-top: 60px;
+  .match-title {
+    @include public-sector-title();
+  }
+  .match-content {
+    @include public-sector-content();
+  }
 }
 </style>

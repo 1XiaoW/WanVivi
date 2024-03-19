@@ -15,12 +15,16 @@ enum API {
   USERREGISTER_URL = '/user/reguser',
   // 用户信息接口GET
   USERINFO_URL = '/user/auth/userInfo/',
+  // 获取用户消息读取状态
+  USERREADSTATE_URL = '/user/auth/userReadState/',
   // 获取其他用户信息接口GET
   USERINFO_OTHER_URL = '/user/userInfo/',
   // 修改用户信息接口PUT
   MODIFYUSERINFO_URL = '/user/auth/userInfo/',
   // 修改用户头像接口
   MODIFYAVATAR_URL = '/user/auth/userAvatar/',
+  // 修改用户签名接口
+  MODIFYSIGN_URL = '/user/auth/userSign/',
   // 修改用户密码接口
   MODIFYPASSWORD_URL = '/user/auth/userPwd/',
   // 更改用户是否阅读消息状态
@@ -36,6 +40,11 @@ export const reqUserRegister = (data: DataParameter) =>
 export const reqUserInfo = (id: number = -1) =>
   request.get<any, UserDetailResponseData>(API.USERINFO_URL + id);
 
+export const reqUserReadState = (id: number) =>
+  request.get<any, ResponseData & { unread_message: number }>(
+    API.USERREADSTATE_URL + id
+  );
+
 export const reqOtherUserInfo = (id: number = -1) =>
   request.get<any, UserDetailResponseData>(API.USERINFO_OTHER_URL + id);
 
@@ -47,6 +56,9 @@ export const reqModifyAvatar = (id: number, formData: FormData) =>
     API.MODIFYAVATAR_URL + id,
     formData
   );
+
+export const reqModifySign = (id: number, sign: string) =>
+  request.put<any, ResponseData>(API.MODIFYSIGN_URL + id, { sign });
 
 export const reqModifyPassword = (id: number, pwd: object) =>
   request.put<any, ResponseData>(API.MODIFYPASSWORD_URL + id, pwd);

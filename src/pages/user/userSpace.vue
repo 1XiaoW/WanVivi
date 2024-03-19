@@ -6,10 +6,11 @@ import {
   UploadFilled,
   StarFilled,
 } from '@element-plus/icons-vue';
-import { reqOtherUserInfo } from '@/api/user/index';
+import { reqOtherUserInfo, reqModifySign } from '@/api/user/index';
 import useUserStore from '@/store/modules/user';
 import { UserDetail } from '@/api/user/type';
 import { useRouter, useRoute } from 'vue-router';
+import { ElMessage } from 'element-plus';
 
 let userStore = useUserStore();
 const loginUser = userStore.userInfo.userId;
@@ -17,6 +18,7 @@ const $route = useRoute();
 const userId = $route.params.userId;
 const $router = useRouter();
 const signText = ref();
+const signInputRef = ref();
 const cursor = ref();
 const menuList = ref();
 const clickLi = ref({
@@ -65,6 +67,7 @@ const menuSelection = (route: string) => {
   activeIndex.value = clickLi.value.index;
 };
 
+// 游标移动
 const move = () => {
   const targetElement = menuList.value.childNodes;
   for (let i = 0; i < targetElement.length - 1; i++) {
@@ -79,10 +82,20 @@ const move = () => {
   }
 };
 
+// 获取用户信息
 const getUserInfo = async () => {
   const res = await reqOtherUserInfo(Number(userId));
   if (res.status === 200) {
     userInfo.value = res.data[0];
+    signText.value = userInfo.value.signature;
+  }
+};
+
+// 更改个性签名
+const changeSign = async () => {
+  const res = await reqModifySign(loginUser, signText.value);
+  if (res.status === 200) {
+    ElMessage.success(res.message);
   }
 };
 
@@ -112,6 +125,7 @@ watch(
             <div class="name">{{ userInfo.username }}</div>
             <div class="sign">
               <el-input
+                @change="changeSign"
                 v-if="loginUser === userInfo.id"
                 v-model="signText"
                 class="sign-input"
@@ -119,7 +133,9 @@ watch(
                 size="small"
                 placeholder="编辑个性签名"
                 type="text"
-                maxlength="60" />
+                maxlength="60"
+                ref="signInputRef"
+                @keyup.enter="signInputRef.blur()" />
               <div v-else class="sign-text">{{ userInfo.signature }}</div>
             </div>
           </div>

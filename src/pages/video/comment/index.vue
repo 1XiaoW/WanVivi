@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Reply from './reply/index.vue';
-import { onMounted, ref, reactive, onBeforeUnmount } from 'vue';
+import { onMounted, ref, onBeforeUnmount } from 'vue';
 import type {
   CommentsResultContent,
   CommentsResponseData,
@@ -15,7 +15,7 @@ const server_url = import.meta.env.VITE_SERVER_URL;
 const props = defineProps(['vId']);
 
 const loading = ref<boolean>(false);
-let cList = reactive<CommentsResultContent>([]);
+let cList = ref<CommentsResultContent>([]);
 const cTotal = ref<number>();
 const offset = ref<number>(1);
 const limit = ref<number>(2);
@@ -25,6 +25,8 @@ const replyText = ref();
 const reply = ref<boolean>(false);
 const replyMark = ref();
 const replyRef = ref();
+
+const flash = ref(true);
 
 onMounted(() => {
   pageY();
@@ -67,7 +69,7 @@ const lazyLoad = async () => {
     );
     if (res.data?.result.length > 0) {
       offset.value++;
-      cList = [...cList, ...res.data.result];
+      cList.value = [...cList.value, ...res.data.result];
       cTotal.value = res.data.total;
       loading.value = false;
     } else {
@@ -86,10 +88,16 @@ const onPostComment = async () => {
     commentText: commentText.value,
   };
   const res: any = await reqVideoCommentPost(params);
+  console.log(res);
   if (res.status === 200) {
     // lazyLoad();
-    res.data.pubdate = '最新';
-    cList.unshift(res.data);
+    // 在发布评论成功后将新评论插入到评论列表的最前面
+    let res1: CommentsResponseData = await reqVideoComment('v', vId, 1, 2);
+    cList.value = res1.data.result;
+    flash.value = false;
+    setTimeout(() => {
+      flash.value = true;
+    }, 1000);
     commentText.value = '';
     ElMessage({
       type: 'success',
@@ -164,7 +172,7 @@ const openReply = async (com_id: string) => {
       </div>
     </div>
     <div class="comment_scroll" style="overflow: auto">
-      <ul>
+      <ul v-if="flash">
         <li class="list-item" v-for="(item, index) in cList" :key="index">
           <div class="list_top">
             <img class="avatar" :src="server_url + item.user_pic" alt="" />

@@ -3,6 +3,7 @@
 import { VideoCamera, Download, Search, Upload } from '@element-plus/icons-vue';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { reqUserReadState } from '@/api/user/index';
 //获取user仓库的数据（visiable）可以控制login组件的对话框显示与隐藏
 import useUserStore from '@/store/modules/user';
 import search from './search/index.vue';
@@ -10,6 +11,7 @@ import search from './search/index.vue';
 const userStore = useUserStore();
 const server_url = import.meta.env.VITE_SERVER_URL;
 
+const emits = defineEmits(['scrollPosition']);
 const props = defineProps(['specialPage']);
 
 const vidRef = ref();
@@ -17,14 +19,22 @@ let x: number = 0;
 let _x = null;
 const isFixed = ref<boolean>(false);
 const $router = useRouter();
+const readState = ref();
 
 onMounted(() => {
   document.addEventListener('scroll', getWindowY);
+  getReadState();
 });
 
 //点击登录与注册按钮的时候弹出对话框
 const login = () => {
   userStore.visible = true;
+};
+
+// 获取消息阅读状态
+const getReadState = async () => {
+  const res = await reqUserReadState(userStore.userInfo.userId);
+  if (res.status === 200) readState.value = res.unread_message;
 };
 
 //退出登录的回调
@@ -63,6 +73,18 @@ const goMessage = () => {
   $router.push('/message');
   userStore.updateMessageState();
 };
+
+const goDynamic = () => {
+  $router.push(`/userSpace/${userStore.userInfo.userId}/dynamic`);
+};
+
+const goStar = () => {
+  $router.push(`/userSpace/${userStore.userInfo.userId}/star`);
+};
+
+const goAnchor = (plate: number) => {
+  emits('scrollPosition', plate);
+};
 </script>
 
 <template>
@@ -79,7 +101,7 @@ const goMessage = () => {
           loop
           :autoplay="true"
           :muted="true"
-          src="../../assets/video/3.webm"></video>
+          src="../../assets/video/2.webm"></video>
       </div>
     </div>
     <div
@@ -107,13 +129,13 @@ const goMessage = () => {
             </svg>
             首页
           </li>
-          <li>番剧</li>
-          <li>直播</li>
-          <li>游戏中心</li>
-          <li>会员购</li>
-          <li>漫画</li>
-          <li>赛事</li>
-          <li>
+          <li @click="goAnchor(0)" v-show="$route.path === '/home'">动画</li>
+          <li @click="goAnchor(1)" v-show="$route.path === '/home'">影视</li>
+          <li @click="goAnchor(2)" v-show="$route.path === '/home'">音乐</li>
+          <li @click="goAnchor(3)" v-show="$route.path === '/home'">舞蹈</li>
+          <li @click="goAnchor(4)" v-show="$route.path === '/home'">赛事</li>
+          <!-- <li>漫画</li> -->
+          <!-- <li>
             <svg
               t="1693644620713"
               class="icon"
@@ -133,7 +155,7 @@ const goMessage = () => {
                 p-id="8554"></path>
             </svg>
             下载客户端
-          </li>
+          </li> -->
         </ul>
       </div>
       <div class="middle">
@@ -159,7 +181,7 @@ const goMessage = () => {
                       >个人中心</el-dropdown-item
                     >
                     <el-dropdown-item
-                      v-if="userStore.userInfo.role"
+                      v-if="userStore.userInfo.role === '超级管理员'"
                       @click="$router.push('/manage')"
                       >管理中心</el-dropdown-item
                     >
@@ -172,27 +194,27 @@ const goMessage = () => {
               <span v-else @click="login">登录</span>
             </div>
           </li>
-          <li>
-            <el-icon size="18"><Search /></el-icon>小会员
-          </li>
+
           <li @click="goMessage">
-            <div
-              class="red-message"
-              v-if="userStore.userInfo.unread_message"></div>
+            <div class="red-message" v-if="readState"></div>
             <el-icon size="18"><Search /></el-icon>消息
           </li>
-          <li>
+          <li @click="goDynamic">
             <el-icon size="18"><Search /></el-icon>动态
           </li>
-          <li>
+          <li @click="goStar">
             <el-icon size="18"><Search /></el-icon>收藏
           </li>
           <li>
+            <el-icon size="18"><Search /></el-icon>我要反馈
+          </li>
+          <!-- 暂未开发 -->
+          <!-- <li>
             <el-icon size="18"><Search /></el-icon>历史
           </li>
           <li>
             <el-icon size="18"><Search /></el-icon>创作中心
-          </li>
+          </li> -->
           <el-button
             size="default"
             type="danger"
@@ -252,12 +274,12 @@ const goMessage = () => {
           height: 30px;
           line-height: 30px;
           cursor: pointer;
-          margin: 0 7px;
+          margin: 0 10px;
           &:hover {
             animation: bounce 0.3s linear;
           }
           svg {
-            vertical-align: middle;
+            vertical-align: sub;
           }
         }
       }
@@ -269,6 +291,7 @@ const goMessage = () => {
       ul {
         min-width: 416px;
         display: flex;
+        justify-content: space-around;
         li {
           position: relative;
           cursor: pointer;

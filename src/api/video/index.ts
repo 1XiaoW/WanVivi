@@ -26,6 +26,7 @@ enum API {
   VIDEO_APPROVED = '/video/approvedVideos/',
   VIDEO_COMMENTS_TOTAL = '/video/getVideoCommentTotal/',
   VIDEO_HOT = '/video/hot',
+  FIVEVIDEOS_CHANNEL = '/video/getFiveVideosOfChannel/',
 }
 
 // 获取视频信息(可按频道取值)
@@ -109,6 +110,10 @@ export const reqSearchByKeyword = (keyword: string) =>
 // 获取当前视频的评论数
 export const reqVideoCommentTotal = (vId: number) =>
   request.post<any>(API.VIDEO_COMMENTS_TOTAL, { vId });
+
+// 获取主页特定频道每个频道的5条数据
+export const reqFiveVideosOfChannel = (channelId: Array<number>) =>
+  request.post<any, any>(API.FIVEVIDEOS_CHANNEL, channelId);
 
 // ------------------视频管理------------------
 

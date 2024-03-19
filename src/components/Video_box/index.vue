@@ -62,8 +62,8 @@ let props = defineProps(['videoInfo']);
         xmlns="http://www.w3.org/2000/svg"
         p-id="6124"
         id="mx_n_1693637882160"
-        width="13"
-        height="13">
+        width="16"
+        height="16">
         <path
           d="M800 128H224C134.4 128 64 198.4 64 288v448c0 89.6 70.4 160 160 160h576c89.6 0 160-70.4 160-160V288c0-89.6-70.4-160-160-160z m96 608c0 54.4-41.6 96-96 96H224c-54.4 0-96-41.6-96-96V288c0-54.4 41.6-96 96-96h576c54.4 0 96 41.6 96 96v448z"
           p-id="6125"
@@ -141,14 +141,14 @@ let props = defineProps(['videoInfo']);
     }
   }
   .video_author {
-    font-size: 13px;
+    font-size: 14px;
     color: rgb(176, 153, 160);
     cursor: pointer;
     &:hover {
       color: #00aeec;
     }
     svg {
-      vertical-align: bottom;
+      vertical-align: middle;
     }
     i {
       margin: 0 6px;

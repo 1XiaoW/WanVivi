@@ -1,5 +1,6 @@
 <template>
   <div class="footer">
+    <el-backtop :right="10" :visibility-height="400"> </el-backtop>
     <div class="introduction">
       <p>
         此项目由钟城灿(linxiaowan)个人开发，有任何好的建议和疑问都可以通过以下联系方式与我联系

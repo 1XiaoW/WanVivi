@@ -246,7 +246,9 @@ const openHot = (video_id: number) => {
           <div class="video_brief">{{ vInfo.brief }}</div>
         </el-row>
         <!-- 评论结构 -->
-        <el-row> <Comments :vId="vId" /> </el-row>
+        <el-row>
+          <Comments :vId="vId" />
+        </el-row>
       </div>
       <!-- 右侧 -->
       <div class="right-content">
