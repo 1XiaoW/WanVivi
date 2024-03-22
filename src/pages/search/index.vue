@@ -35,8 +35,19 @@ const getSearchVideo = async () => {
 };
 
 // 监听按钮点击事件，并更新激活按钮的索引
-const handleButtonClick = (index: number) => {
+const handleButtonClick = async (index: number) => {
   activeButtonIndex.value = index;
+  const res = await reqVideo(
+    props.channelId,
+    0,
+    offset.value,
+    limit.value,
+    activeButtonIndex.value
+  );
+  if (res.status === 200) {
+    total.value = res.total;
+    searchVideoList.value = res.data;
+  }
 };
 
 // 视频盒子点击事件
@@ -47,7 +58,13 @@ const videoBoxHandler = async (vid: number) => {
 // 分页
 const handleCurrentChange = async (val: number) => {
   offset.value = val;
-  const res = await reqVideo(props.channelId, 0, offset.value, limit.value);
+  const res = await reqVideo(
+    props.channelId,
+    0,
+    offset.value,
+    limit.value,
+    activeButtonIndex.value
+  );
   if (res.status === 200) {
     total.value = res.total;
     searchVideoList.value = res.data;

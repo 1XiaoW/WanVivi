@@ -82,6 +82,10 @@ const goStar = () => {
   $router.push(`/userSpace/${userStore.userInfo.userId}/star`);
 };
 
+const goFeedback = () => {
+  $router.push({ name: 'feedback' });
+};
+
 const goAnchor = (plate: number) => {
   emits('scrollPosition', plate);
 };
@@ -205,7 +209,7 @@ const goAnchor = (plate: number) => {
           <li @click="goStar">
             <el-icon size="18"><Search /></el-icon>收藏
           </li>
-          <li>
+          <li @click="goFeedback">
             <el-icon size="18"><Search /></el-icon>我要反馈
           </li>
           <!-- 暂未开发 -->
