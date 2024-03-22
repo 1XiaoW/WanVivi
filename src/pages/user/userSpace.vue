@@ -7,6 +7,7 @@ import {
   StarFilled,
 } from '@element-plus/icons-vue';
 import { reqOtherUserInfo, reqModifySign } from '@/api/user/index';
+import { reqAllVideosLikeAndViewByAuthorId } from '@/api/video/index';
 import useUserStore from '@/store/modules/user';
 import { UserDetail } from '@/api/user/type';
 import { useRouter, useRoute } from 'vue-router';
@@ -15,7 +16,7 @@ import { ElMessage } from 'element-plus';
 let userStore = useUserStore();
 const loginUser = userStore.userInfo.userId;
 const $route = useRoute();
-const userId = $route.params.userId;
+const userId = Number($route.params.userId);
 const $router = useRouter();
 const signText = ref();
 const signInputRef = ref();
@@ -37,6 +38,16 @@ const userInfo = ref<UserDetail>({
   signature: '',
 });
 
+interface TotalList {
+  total_views: string;
+  total_likes: string;
+}
+
+const totalList = ref<TotalList>({
+  total_views: '',
+  total_likes: '',
+});
+
 onMounted(() => {
   move();
   menuSelection(urlStr!);
@@ -53,10 +64,10 @@ const menuSelection = (route: string) => {
       index = 1;
       break;
     case 'uploads':
-      index = 2;
+      index = 3;
       break;
     case 'star':
-      index = 3;
+      index = 2;
       break;
   }
   // $router.push({ path: `/userSpace/${route}` });
@@ -84,7 +95,9 @@ const move = () => {
 
 // 获取用户信息
 const getUserInfo = async () => {
-  const res = await reqOtherUserInfo(Number(userId));
+  const res = await reqOtherUserInfo(userId);
+  const res2 = await reqAllVideosLikeAndViewByAuthorId(userId);
+  totalList.value = res2.data[0];
   if (res.status === 200) {
     userInfo.value = res.data[0];
     signText.value = userInfo.value.signature;
@@ -158,40 +171,40 @@ watch(
                 >动态</span
               >
             </li>
-            <li @click="menuSelection('uploads')">
+            <li @click="menuSelection('star')">
+              <StarFilled
+                style="color: #f3a034; width: 24px; height: 24px" /><span
+                :class="{ active: activeIndex === 2 }"
+                >收藏</span
+              >
+            </li>
+            <!-- <li @click="menuSelection('uploads')">
               <UploadFilled
                 style="color: #02b5da; width: 24px; height: 24px" /><span
                 :class="{ active: activeIndex === 2 }"
                 >投稿</span
               >
-            </li>
-            <li @click="menuSelection('star')">
-              <StarFilled
-                style="color: #f3a034; width: 24px; height: 24px" /><span
-                :class="{ active: activeIndex === 3 }"
-                >收藏</span
-              >
-            </li>
+            </li> -->
             <li ref="cursor" class="cursor"></li>
           </ul>
         </div>
         <div class="statistics">
           <ul class="statistics-list">
-            <li>
+            <!-- <li>
               <div>关注数</div>
               <span>44</span>
             </li>
             <li>
               <div>粉丝数</div>
               <span>1</span>
-            </li>
+            </li> -->
             <li>
               <div>获赞数</div>
-              <span>2</span>
+              <span>{{ totalList.total_likes }}</span>
             </li>
             <li>
               <div>播放数</div>
-              <span>4</span>
+              <span>{{ totalList.total_views }}</span>
             </li>
           </ul>
         </div>

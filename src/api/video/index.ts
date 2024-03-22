@@ -20,6 +20,7 @@ enum API {
   VIDEO_COMMENTS_POST = '/video/auth/comment/',
   VIDEO_BYAUTHORID = '/video/getVideoListByAuthorId/',
   VIDEO_COLLECTBYAUTHORID = '/video/getCollectVideoByAuthorId/',
+  VIDEO_ALLVIDEOSLIKEANDVIEWBYID = '/video/getAllVideosLikeAndViewByAuthorId/',
   VIDEO_SEARCHBYKEYWORD = '/video/getSearchVideo/',
   VIDEO_STATE = '/video/changeVideoState/',
   VIDEO_DELETE = '/video/deleteVideo/',
@@ -91,14 +92,20 @@ export const reqVideoCommentPost = (data: any) =>
   request.post<any, ResponseData>(API.VIDEO_COMMENTS_POST, data);
 
 // 通过用户id获取用户投稿视频
-export const reqVideoByAuthorId = (authorId: number) =>
-  request.get<any, VideoInfoResponseData>(API.VIDEO_BYAUTHORID, {
+export const reqVideoByAuthorId = (authorId: number, order?: number) =>
+  request.get<any, VideoInfoResponseData>(API.VIDEO_BYAUTHORID + order, {
     params: { authorId },
   });
 
 // 通过用户id获取用户收藏视频
 export const reqCollectVideoByAuthorId = (authorId: number) =>
   request.get<any, VideoInfoResponseData>(API.VIDEO_COLLECTBYAUTHORID, {
+    params: { authorId },
+  });
+
+// 通过用户id获取作者所有视频点赞和播放量总和
+export const reqAllVideosLikeAndViewByAuthorId = (authorId: number) =>
+  request.get<any, any>(API.VIDEO_ALLVIDEOSLIKEANDVIEWBYID, {
     params: { authorId },
   });
 
