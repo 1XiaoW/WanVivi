@@ -31,10 +31,10 @@ enum API {
 
 // 获取视频信息(可按频道取值)
 export const reqVideo = (
-  channelId: number = 0,
-  state: number = 0,
-  offset: number = 1,
-  limit: number = 10
+  channelId: number = 0, //默认为0，即不区分频道
+  state: number = 0, //默认视频状态 0为通过审核的视频
+  offset: number = 1, //默认分页页码
+  limit: number = 10 //默认分页每页显示数量，如需无限制取一个较大的数即可，例如9999999
 ) =>
   request.get<any, VideoResponseData>(API.VIDEO_URL, {
     params: {

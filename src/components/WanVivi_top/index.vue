@@ -309,6 +309,8 @@ const goAnchor = (plate: number) => {
             height: 40px;
             background-color: #ccc;
             border-radius: 50%;
+            object-fit: cover;
+            object-position: center;
           }
           .red-message {
             position: absolute;

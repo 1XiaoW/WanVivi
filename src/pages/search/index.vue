@@ -1,23 +1,36 @@
 <script setup lang="ts">
-import { reqSearchByKeyword } from '@/api/video';
+import { reqSearchByKeyword, reqVideo } from '@/api/video';
 import { ElMessage } from 'element-plus';
 import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
-let props = defineProps(['query']);
-let activeButtonIndex = ref(0); // 记录当前激活按钮的索引，默认为0
-let searchVideoList = ref<any>({});
-let $router = useRouter();
+const props = defineProps(['query', 'channelId']);
+const activeButtonIndex = ref(0); // 记录当前激活按钮的索引，默认为0
+const searchVideoList = ref<any>({});
+const $router = useRouter();
+
+const total = ref<number>(0);
+const offset = ref<number>(1);
+const limit = ref<number>(30);
 
 onMounted(() => {
   getSearchVideo();
 });
 
 const getSearchVideo = async () => {
-  const res = await reqSearchByKeyword(props.query);
-  if (res.status === 200) {
-    ElMessage.success(res.message);
+  let res, t;
+  if (props.query) {
+    res = await reqSearchByKeyword(props.query);
+    t = true;
+  } else {
+    res = await reqVideo(props.channelId, 0, offset.value, limit.value);
+    total.value = res.total;
+  }
+  if (res.status === 200 && res.data.length > 0) {
+    if (t) ElMessage.success(res.message);
     searchVideoList.value = res.data;
+  } else {
+    ElMessage.success('暂无更多');
   }
 };
 
@@ -29,6 +42,16 @@ const handleButtonClick = (index: number) => {
 // 视频盒子点击事件
 const videoBoxHandler = async (vid: number) => {
   $router.push({ path: '/video', query: { videoId: vid } });
+};
+
+// 分页
+const handleCurrentChange = async (val: number) => {
+  offset.value = val;
+  const res = await reqVideo(props.channelId, 0, offset.value, limit.value);
+  if (res.status === 200) {
+    total.value = res.total;
+    searchVideoList.value = res.data;
+  }
 };
 
 watch(
@@ -79,6 +102,16 @@ watch(
           @click="videoBoxHandler(item.video_id)" />
       </div>
     </div>
+    <div class="pagination">
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        v-model="offset"
+        :page-size="limit"
+        :total="total"
+        @current-change="handleCurrentChange"
+        :hide-on-single-page="total <= 30" />
+    </div>
     <WanViviBottom />
   </div>
 </template>
@@ -111,6 +144,12 @@ watch(
       grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
       gap: 20px;
     }
+  }
+  .pagination {
+    width: 100%;
+    display: flex;
+    margin: 40px 0;
+    justify-content: center;
   }
 }
 </style>

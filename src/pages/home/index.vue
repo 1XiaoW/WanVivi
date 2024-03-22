@@ -3,7 +3,7 @@
 // 引入轮播图组件
 import carousel from './carousel/index.vue';
 import { ElMessage } from 'element-plus';
-import { onMounted, ref, toRef } from 'vue';
+import { onMounted, ref } from 'vue';
 import { reqVideo, reqFiveVideosOfChannel } from '@/api/video/index.ts';
 import { useRouter } from 'vue-router';
 import type { VideoResponseData, VideoContent } from '@/api/video/type.ts';
@@ -96,6 +96,12 @@ const scrollPosition = (plate: number) => {
     behavior: 'smooth',
   });
 };
+
+// 跳转到对应的频道页
+const searchChannel = (channelId: number) => {
+  if (channelId === 1045) return;
+  $router.push({ path: `/search`, query: { channelId } });
+};
 </script>
 
 <template>
@@ -143,14 +149,14 @@ const scrollPosition = (plate: number) => {
         <!-- 中间小分类 -->
         <div class="top_middle">
           <el-button
-            size="default"
-            class="category"
-            text
-            bg
             v-for="(item, index) in useChannel.channelList"
             :key="index"
-            >{{ item.channel }}</el-button
-          >
+            @click="searchChannel(item.id)"
+            class="category"
+            text
+            bg>
+            {{ item.channel }}
+          </el-button>
         </div>
         <div class="line"></div>
         <!-- 右侧其他栏目 -->
@@ -198,33 +204,41 @@ const scrollPosition = (plate: number) => {
                   font-size: 15px;
                   margin-right: 5px;
                 "></span>
-              萌系星探官招募中
+              收集视频投稿员招募中
             </div>
           </div>
           <div class="f-left-content">
-            <div>
-              <img src="../../assets/images/report1.webp" alt="" />
-              <p>剧场版大雄究竟有多强！</p>
+            <div @click="videoBoxHandler(55)">
+              <img
+                src="http://localhost:5051\images\音乐\1710917964757_8becba7.jpg"
+                alt="" />
+              <p>G.E.M.邓紫棋《喜欢你》</p>
               <span class="up" style="color: #99a6c4; margin-top: 15px">UP</span
-              >沐沐秋
+              >邓紫棋
             </div>
-            <div>
-              <img src="../../assets/images/report2.webp" alt="" />
-              <p>战斗吧！素质</p>
+            <div @click="videoBoxHandler(56)">
+              <img
+                src="http://localhost:5051\images\音乐\1710917998476_8c2d1ef5acf6bbcaf3ea001775045e681173fd2a.jpg"
+                alt="" />
+              <p>G.E.M.邓紫棋《新的心跳》</p>
               <span class="up" style="color: #99a6c4; margin-top: 15px">UP</span
-              >沐沐秋
+              >邓紫棋
             </div>
-            <div>
-              <img src="../../assets/images/report3.webp" alt="" />
-              <p>耗时半年！up主用中文填词的</p>
+            <div @click="videoBoxHandler(57)">
+              <img
+                src="http://localhost:5051\images\音乐\1710918044601_5771acdb3a.jpg"
+                alt="" />
+              <p>G.E.M.邓紫棋《天空没有极限》</p>
               <span class="up" style="color: #99a6c4; margin-top: 15px">UP</span
-              >沐沐秋
+              >邓紫棋
             </div>
-            <div>
-              <img src="../../assets/images/report4.webp" alt="" />
-              <p>4K /60FPS紫罗兰永恒花园</p>
+            <div @click="videoBoxHandler(58)">
+              <img
+                src="http://localhost:5051\images\音乐\1710918181057_676ae9ae127653fbf9d1fcbbed424927a64ba572.jpg"
+                alt="" />
+              <p>G.E.M.邓紫棋《句号》</p>
               <span class="up" style="color: #99a6c4; margin-top: 15px">UP</span
-              >沐沐秋
+              >邓紫棋
             </div>
           </div>
         </div>
@@ -516,7 +530,7 @@ const scrollPosition = (plate: number) => {
 
 .f-left-content img {
   width: 206px;
-  /* height: 116px; */
+  height: 116px;
 }
 
 .f-left-content div {
@@ -534,10 +548,6 @@ const scrollPosition = (plate: number) => {
   width: 321px;
   height: 100%;
   /* background-color: pink; */
-}
-
-.f-r-other-2 {
-  width: 279px;
 }
 
 .f-right-header {
@@ -562,17 +572,6 @@ const scrollPosition = (plate: number) => {
 .f-right-content img {
   width: 320px;
   height: 184px;
-}
-
-.other-1 {
-  flex-wrap: wrap;
-  width: 100%;
-  overflow: hidden;
-}
-
-.other-1 div {
-  position: relative;
-  margin-bottom: 20px;
 }
 
 .f-left-content div p {
@@ -649,24 +648,9 @@ const scrollPosition = (plate: number) => {
   color: #9999a6;
 }
 
-.other-1 p {
-  width: 206px;
-  line-height: 20px;
-}
 /*  */
 .f-right-content {
   position: relative;
-}
-
-.rank-content-wrapper img {
-  width: 112px;
-  height: 149px;
-  margin-right: 10px;
-}
-
-.rank-content-wrapper p {
-  font-size: 14px;
-  width: 198px;
 }
 
 .animation {

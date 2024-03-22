@@ -8,10 +8,10 @@ let $router = useRouter();
 let clean = ref<boolean>();
 
 const keywordSearch = () => {
-  if (keyword.value && keyword.value.length > 2)
+  if (keyword.value && keyword.value.length >= 2)
     $router.push({ path: `/search`, query: { keyword: keyword.value } });
   else
-    ElMessage.error({ message: '请输入2个以上关键词进行搜索', duration: 800 });
+    ElMessage.error({ message: '请至少输入2个关键词进行搜索', duration: 800 });
 };
 
 const cleanKeyword = () => {

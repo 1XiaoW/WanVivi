@@ -1,60 +1,22 @@
-<template>
-  <div class="carousel" @mouseover="stopAutoPlay()" @mouseout="startAutoPlay()">
-    <!-- 存放要轮播的图片 -->
-    <div class="img-box">
-      <img
-        :src="server_url + item.image_url"
-        alt=""
-        v-for="item in bannerArr"
-        :key="item.sort_order" />
-    </div>
-    <!-- 轮播图底部 -->
-    <div
-      class="bottom-box"
-      :style="{ '--b-color': bannerArr[active_index]?.bottom_color }">
-      <!-- 轮播图左侧--小圆点 -->
-      <div class="l-box">
-        <div class="title">{{ bannerArr[active_index]?.title }}</div>
-        <ul class="dots">
-          <!-- 吃豆人 -->
-          <li
-            :class="[
-              index == active_index ? 'pacman' : 'dot',
-              is_prev ? 'l' : '',
-            ]"
-            v-for="(item, index) in bannerArr"
-            :key="index"
-            @click="changeBanner(index)">
-            <div v-if="index == active_index"></div>
-            <div v-if="index == active_index"></div>
-          </li>
-        </ul>
-      </div>
-      <!-- 轮播图右侧--箭头 -->
-      <div class="r-box">
-        <el-icon @click="changeBanner(-1, true)"><ArrowLeft /></el-icon>
-        <el-icon @click="changeBanner(-1, false)"><ArrowRight /></el-icon>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 // @ts-ignore
 import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue';
-import { onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { reqBanner } from '@/api/home/index.ts';
 import type { BannerContent, BannerResponseData } from '@/api/home/type.ts';
 
 // 轮播图数据
-let bannerArr = ref<BannerContent>([]);
-let server_url = import.meta.env.VITE_SERVER_URL;
+const bannerArr = ref<BannerContent>([]);
+const cloneBannerArr = ref<BannerContent>([]);
+const server_url = import.meta.env.VITE_SERVER_URL;
 // 定时器
 let timer: any = null;
 // 当前轮播下标
-let active_index = ref<number>(0);
+let active_index = ref<number>(1);
 // 是否点击上一张（控制吃豆人朝向）
 let is_prev = ref<boolean>(false);
+const imgBoxRef = ref();
+
 // 轮播图数据（json格式）
 // let list = reactive([
 //   {
@@ -79,6 +41,18 @@ let is_prev = ref<boolean>(false);
 //   },
 // ]);
 
+onMounted(() => {
+  move();
+  // 初始化自动轮播
+  startAutoPlay();
+  // 获取轮播图数据
+  getBannerInfo();
+});
+
+onBeforeUnmount(() => {
+  stopAutoPlay();
+});
+
 // 停止轮播
 const stopAutoPlay = () => {
   // 清空定时器
@@ -89,12 +63,13 @@ const startAutoPlay = () => {
   // 停止轮播
   stopAutoPlay();
   timer = setInterval(() => {
-    active_index.value++;
-    if (active_index.value > bannerArr.value.length - 1) {
-      active_index.value = 0;
-    }
-    is_prev.value = false;
-    changeBanner(active_index.value, is_prev.value);
+    changeBanner(-1, false);
+    // active_index.value++;
+    // if (active_index.value > cloneBannerArr.value.length) {
+    //   changeBanner(-1, false);
+    // }
+    // is_prev.value = false;
+    // changeBanner(active_index.value, is_prev.value);
   }, 3000);
 };
 // 切换banner 参数：index=轮播下标（点击上一张，下一张按钮时，该值为-1；点击指示器时，
@@ -115,44 +90,114 @@ const changeBanner = (index: any, is_prev1?: any) => {
     if (is_prev1) {
       // 上一张
       active_index.value--;
-      if (active_index.value < 0) {
+      if (active_index.value < 1) {
         active_index.value = bannerArr.value.length - 1;
+        imgBoxRef.value.style.transition = 'none';
+        // requestAnimationFrame(() => {
+        //   active_index.value = bannerArr.value.length - 2;
+        //   imgBoxRef.value.style.transition = '.35s';
+        //   move();
+        // });
+        setTimeout(() => {
+          active_index.value = bannerArr.value.length - 2;
+          imgBoxRef.value.style.transition = '.35s';
+          move();
+        }, 1);
       }
     } else {
       // 下一张
       active_index.value++;
-      if (active_index.value > bannerArr.value.length - 1) {
+      if (active_index.value > bannerArr.value.length - 2) {
         active_index.value = 0;
+        imgBoxRef.value.style.transition = 'none';
+        // requestAnimationFrame(() => {
+        //   active_index.value = 1;
+        //   imgBoxRef.value.style.transition = '.35s';
+        //   move();
+        // });
+        setTimeout(() => {
+          active_index.value = 1;
+          imgBoxRef.value.style.transition = '.35s';
+          move();
+        }, 1);
       }
     }
     // 指明上一张或下一张
     is_prev.value = is_prev1;
   }
-  // --m-left,--b-color是css的自定义属性、
-  // 设置偏移量到达显示指定图片的目的
-  (document.querySelector('.img-box') as HTMLElement)?.style.setProperty(
-    '--m-left',
-    `${active_index.value}`
-  );
+
+  move();
   // 设置图片底部的渐变效果,此处暂时不用，直接在div 绑定 style
   // (document.querySelector('.bottom-box') as HTMLElement).style.setProperty(
   //   '--b-color',
   //   list[active_index.value].bottom_color
   // );
 };
-onMounted(() => {
-  // 初始化自动轮播
-  startAutoPlay();
-  // 获取轮播图数据
-  getBannerInfo();
-});
+
+// 轮播图移动函数
+const move = () => {
+  // --m-left,--b-color是css的自定义属性、
+  // 设置偏移量到达显示指定图片的目的
+  (document.querySelector('.img-box') as HTMLElement)?.style.setProperty(
+    '--m-left',
+    `${active_index.value}`
+  );
+};
 
 // 获取轮播图数据
 const getBannerInfo = async () => {
   let result: BannerResponseData = await reqBanner();
-  if (result.status == 200) bannerArr.value = result.data;
+  if (result.status == 200) {
+    bannerArr.value = [...result.data];
+    cloneBannerArr.value = [...result.data];
+    // 在轮播数组的结尾插入与开头第一张图片相同的图片
+    bannerArr.value.push(bannerArr.value[0]);
+    // 在轮播数组的开头插入与最后一张图片相同的图片
+    bannerArr.value.unshift(bannerArr.value[bannerArr.value.length - 2]);
+  }
 };
 </script>
+
+<template>
+  <div class="carousel" @mouseover="stopAutoPlay()" @mouseout="startAutoPlay()">
+    <!-- 存放要轮播的图片 -->
+    <div class="img-box" ref="imgBoxRef">
+      <img
+        alt=""
+        v-for="item in bannerArr"
+        :key="item.sort_order"
+        :src="server_url + item.image_url" />
+    </div>
+    <!-- 轮播图底部 -->
+    <div
+      class="bottom-box"
+      :style="{ '--b-color': bannerArr[active_index]?.bottom_color }">
+      <!-- 轮播图左侧--小圆点 -->
+      <div class="l-box">
+        <div class="title">{{ bannerArr[active_index]?.title }}</div>
+        <ul class="dots">
+          <!-- 吃豆人 -->
+          <li
+            v-for="(item, index) in cloneBannerArr"
+            :key="index"
+            :class="[
+              item.sort_order == active_index ? 'pacman' : 'dot',
+              is_prev ? 'l' : '',
+            ]"
+            @click="changeBanner(item.sort_order)">
+            <div v-if="item.sort_order == active_index"></div>
+            <div v-if="item.sort_order == active_index"></div>
+          </li>
+        </ul>
+      </div>
+      <!-- 轮播图右侧--箭头 -->
+      <div class="r-box">
+        <el-icon @click="changeBanner(-1, true)"><ArrowLeft /></el-icon>
+        <el-icon @click="changeBanner(-1, false)"><ArrowRight /></el-icon>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style lang="scss" scoped>
 .carousel {

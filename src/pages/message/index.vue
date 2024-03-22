@@ -1,4 +1,26 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+
+const $route = useRoute();
+const activeItem = ref('system');
+
+onMounted(() => {
+  fixedItem();
+});
+
+const setActiveItem = (item: string) => {
+  activeItem.value = item;
+};
+
+// 检测地址变化更改activeItem
+const fixedItem = () => {
+  const name = $route.name;
+  if (name) {
+    setActiveItem(name.toString()); // 使用类型断言将 name 断言为 string 类型
+  }
+};
+</script>
 
 <template>
   <div class="message-container">
@@ -12,8 +34,17 @@
               <div>消息中心</div>
             </div>
             <ul class="list">
-              <li class="item active">
+              <li
+                class="item"
+                :class="{ active: activeItem === 'system' }"
+                @click="setActiveItem('system')">
                 <router-link to="/message/system">系统通知</router-link>
+              </li>
+              <li
+                class="item"
+                :class="{ active: activeItem === 'feedback' }"
+                @click="setActiveItem('feedback')">
+                <router-link to="/message/feedback">反馈中心</router-link>
               </li>
               <li class="item">
                 <router-link to="">暂定</router-link>
@@ -24,7 +55,9 @@
         </div>
         <div class="space-right">
           <div class="space-right-top">
-            <div class="title">系统通知</div>
+            <div class="title">
+              {{ activeItem === 'system' ? '系统通知' : '反馈中心' }}
+            </div>
           </div>
           <div class="space-right-bottom ps">
             <el-scrollbar>

@@ -51,7 +51,10 @@ const router = createRouter({
     {
       path: '/search',
       component: () => import('@/pages/search/index.vue'),
-      props: (route) => ({ query: route.query.keyword }),
+      props: (route) => ({
+        query: route.query.keyword,
+        channelId: route.query.channelId,
+      }),
     },
     {
       path: '/message',
@@ -63,14 +66,21 @@ const router = createRouter({
           path: 'system',
           component: () => import('@/pages/message/system/index.vue'),
         },
+        {
+          name: 'feedback',
+          path: 'feedback',
+          component: () => import('@/pages/message/feedback/index.vue'),
+        },
       ],
     },
     {
       name: 'manage',
       path: '/manage',
       component: () => import('@/pages/manage/index.vue'),
+      redirect: { name: 'message' },
       children: [
         {
+          name: 'message',
           path: 'message',
           component: () => import('@/pages/manage/message/index.vue'),
         },
