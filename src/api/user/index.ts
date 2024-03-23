@@ -6,6 +6,7 @@ import {
   UserLoginResponseData,
   UserDetailResponseData,
   ModifyUserAvatarResponseData,
+  DynamicListResponseData,
 } from './type.ts';
 // 枚举接口地址
 enum API {
@@ -29,6 +30,12 @@ enum API {
   MODIFYPASSWORD_URL = '/user/auth/userPwd/',
   // 更改用户是否阅读消息状态
   READMSGSTATE_URL = '/user/auth/readMsgState/',
+  // 查询动态
+  DYNAMIC_URL = '/user/dynamic/',
+  // 添加动态
+  ADDDYNAMIC_URL = '/user/auth/addDynamic/',
+  // 删除动态
+  DELETEDYNAMIC_URL = '/user/auth/deleteDynamic/',
 }
 
 export const reqUserLogin = (data: DataParameter) =>
@@ -65,3 +72,12 @@ export const reqModifyPassword = (id: number, pwd: object) =>
 
 export const reqChangeReadMsgState = (id: number) =>
   request.put<any, ResponseData>(API.READMSGSTATE_URL + id);
+
+export const reqGetDynamic = (id: number) =>
+  request.get<any, DynamicListResponseData>(API.DYNAMIC_URL + id);
+
+export const reqAddDynamic = (id: number, text: Text) =>
+  request.post<any, ResponseData>(API.ADDDYNAMIC_URL + id, { text });
+
+export const reqDeleteDynamic = (id: number) =>
+  request.delete<any, ResponseData>(API.DELETEDYNAMIC_URL + id);

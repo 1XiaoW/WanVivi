@@ -208,6 +208,8 @@ const videoBoxHandler = async (vid: number) => {
   }
   .home-right {
     // height: 100px;
+    height: 636px;
+
     strong {
       font-weight: bold;
     }

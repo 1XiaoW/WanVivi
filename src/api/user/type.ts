@@ -49,3 +49,14 @@ export interface UserDetailResponseData extends ResponseData {
 export interface ModifyUserAvatarResponseData extends ResponseData {
   fileUrl: string;
 }
+
+export interface Dynamic {
+  id: number;
+  user_id: number;
+  dynamic_text: Text;
+  date: Date;
+}
+
+export interface DynamicListResponseData extends ResponseData {
+  data: Dynamic[];
+}

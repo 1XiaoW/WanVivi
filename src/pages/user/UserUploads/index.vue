@@ -110,6 +110,7 @@
     }
   }
   .list-right {
+    height: 636px;
     strong {
       font-weight: bold;
     }

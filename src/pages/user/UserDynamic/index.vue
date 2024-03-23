@@ -1,47 +1,202 @@
 <script setup lang="ts">
 import { MoreFilled } from '@element-plus/icons-vue';
+import '@wangeditor/editor/dist/css/style.css';
+import { Editor, Toolbar } from '@wangeditor/editor-for-vue';
+import { watch, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
+import {
+  reqAddDynamic,
+  reqDeleteDynamic,
+  reqGetDynamic,
+  reqOtherUserInfo,
+} from '@/api/user/index';
+import { useRoute } from 'vue-router';
+import useUserStore from '@/store/modules/user';
+import { ElMessage } from 'element-plus';
+
+const dynamicContent = ref();
+const dynamicList = ref();
+const userStore = useUserStore();
+const $route = useRoute();
+const currentUser = Number($route.params.userId);
+const userInfo = ref();
+
+onMounted(() => {
+  getUserInfo();
+  getDynamic();
+});
+
+// 获取当前用户信息
+const getUserInfo = async () => {
+  const res = await reqOtherUserInfo(currentUser);
+  if (res.status === 200) {
+    userInfo.value = res.data[0];
+  }
+};
+
+// 获取动态
+const getDynamic = async () => {
+  const res = await reqGetDynamic(currentUser);
+  if (res.status === 200) {
+    dynamicList.value = res.data;
+  }
+};
+
+// 添加动态
+const submitDynamic = async () => {
+  const res = await reqAddDynamic(currentUser, dynamicContent.value);
+  if (res.status === 200) {
+    getDynamic();
+    ElMessage.success('发布动态成功');
+  }
+};
+
+// 删除动态
+const deleteDynamic = async () => {
+  const res = await reqDeleteDynamic(currentUser);
+  if (res.status === 200) {
+    ElMessage.success('删除动态成功');
+  }
+};
+
+watch(
+  () => $route.params.userId,
+  () => {
+    // 重新渲染页面
+    location.reload();
+  }
+);
+
+// 编辑器实例，必须用 shallowRef
+const editorRef = shallowRef();
+// mode
+const mode = ref('default');
+const toolbarConfig = {
+  excludeKeys: [],
+};
+const editorConfig = {
+  placeholder: '',
+  MENU_CONF: {
+    // uploadImage: {
+    // 	//上传图片配置
+    // 	server: 'http://127.0.0.1:3007/set/uploadCompanyPicture', //上传接口地址
+    // 	fieldName: 'file', //上传文件名
+    // 	methods: 'post',
+    // 	metaWithUrl: true, // 参数拼接到 url 上
+    // 	// 单个文件上传成功之后
+    // 	// onSuccess(file, res) {
+    // 	// },
+    // 	// 自定义插入图片
+    // 	customInsert(res, insertFn) {
+    // 		insertFn(res.url)
+    // 	},
+    // },
+  },
+};
+// 上传图片，修改 uploadImage 菜单配置
+// 需要注意的是，如何去修改参数？
+toolbarConfig.excludeKeys = [
+  'blockquote',
+  'bgColor',
+  'color',
+  'group-more-style',
+  'fontFamily',
+  'bulletedList',
+  'numberedList',
+  'lineHeight',
+  'todo',
+  'insertLink',
+  'group-video',
+  'insertTable',
+  'codeBlock',
+  'divider',
+  'fullScreen',
+  'group-image',
+
+  // 排除菜单组，写菜单组 key 的值即可
+] as any;
+
+// 组件销毁时，也及时销毁编辑器
+onBeforeUnmount(() => {
+  const editor = editorRef.value;
+  if (editor == null) return;
+  editor.destroy();
+});
+
+const handleCreated = (editor: any) => {
+  editorRef.value = editor; // 记录 editor 实例，重要！
+};
 </script>
 
 <template>
   <div class="dynamic-container">
-    <el-card class="dynamic-card" shadow="never">
-      <div class="card-header">
-        <div class="card-header-left">
-          <div class="card-avatar">
-            <img src="../../../assets/images/hotspot.avif" alt="" />
+    <el-card
+      class="dynamic-card"
+      shadow="never"
+      v-if="currentUser === userStore.userInfo.userId">
+      <!-- 发布动态结构 -->
+      <div style="border: 1px solid #ccc">
+        <!-- wangEditor结构 -->
+        <Toolbar
+          style="border-bottom: 1px solid #ccc"
+          :editor="editorRef"
+          :defaultConfig="toolbarConfig"
+          :mode="mode" />
+        <Editor
+          style="height: 300px; overflow-y: hidden"
+          v-model="dynamicContent"
+          :defaultConfig="editorConfig"
+          :mode="mode"
+          @onCreated="handleCreated" />
+      </div>
+      <!-- 提交动态 -->
+      <div class="submit">
+        <el-button size="large" type="primary" @click="submitDynamic"
+          >发布</el-button
+        >
+      </div>
+      <!-- 动态内容展示 -->
+      <div
+        class="dynamic-content"
+        v-for="(item, index) in dynamicList"
+        :key="index">
+        <div class="card-header">
+          <div class="card-header-left">
+            <div class="card-avatar">
+              <img :src="`http://localhost:5051${userInfo.user_pic}`" alt="" />
+            </div>
+            <div class="card-info">
+              <span>{{
+                userInfo.nickname ? userInfo.nickname : userInfo.username
+              }}</span>
+              <div class="pubTime">{{ item.date }}</div>
+            </div>
           </div>
-          <div class="card-info">
-            <span>邓紫棋</span>
-            <div class="pubTime">2022年8月15日</div>
+          <div class="card-header-right">
+            <el-dropdown trigger="click">
+              <span>
+                <el-icon style="margin-right: 20px" size="large"
+                  ><MoreFilled
+                /></el-icon>
+              </span>
+              <template #dropdown>
+                <el-dropdown-menu
+                  v-if="item.user_id === userStore.userInfo.userId">
+                  <!-- <el-dropdown-item>举报</el-dropdown-item> -->
+                  <el-dropdown-item @click="deleteDynamic"
+                    >删除</el-dropdown-item
+                  >
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </div>
         </div>
-        <div class="card-header-right">
-          <el-dropdown trigger="click">
-            <span>
-              <el-icon style="margin-right: 20px" size="large"
-                ><MoreFilled
-              /></el-icon>
-            </span>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item>举报</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+        <div class="card-content">
+          <div class="text" v-html="item.dynamic_text"></div>
         </div>
       </div>
-      <div class="card-content">
-        <div class="text">
-          920爱牙日到啦～有一直想整牙但迟迟没行动的姐妹吗？我给大家争取到了免费口腔面诊福利！<br />
-          戳这里免费预约👉网页链接👈赶紧冲鸭！[tv_抓狂]<br />
-          B站粉丝线上预约到店5️⃣大福利如下：<br />
-          1️⃣免费获得价值1699黑科技口扫服务！<br />
-          2️⃣免费提供专业牙科全方位口腔CT扫描！<br />
-          3️⃣免费赠送价值99元的精美旅行洗漱包！<br />
-          4️⃣免费获得硕博正畸医生1V1面诊&方案思路！<br />
-          5️⃣确认方案报我名字【tina小姐姐】立减500元！<br />
-        </div>
-      </div>
+    </el-card>
+    <el-card v-else>
+      <el-empty description="这里什么都没有！" />
     </el-card>
     <el-card class="right-card">
       <strong
@@ -71,45 +226,55 @@ import { MoreFilled } from '@element-plus/icons-vue';
   gap: 30px;
   .dynamic-card {
     width: 100%;
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      .card-header-left {
+    .dynamic-content {
+      margin: 50px 0;
+      .card-header {
         display: flex;
-        .card-avatar {
-          img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+        justify-content: space-between;
+        align-items: center;
+        .card-header-left {
+          display: flex;
+          .card-avatar {
+            img {
+              width: 50px;
+              height: 50px;
+              border-radius: 50%;
+            }
+          }
+          .card-info {
+            span {
+              color: #ff8cb0;
+              font-size: 17px;
+              font-weight: 600;
+              line-height: 32px;
+            }
+            .pubTime {
+              font-size: 13px;
+              line-height: 18px;
+              color: #9499a0;
+            }
+            margin: -6px 0 0 20px;
           }
         }
-        .card-info {
-          span {
-            color: #ff8cb0;
-            font-size: 17px;
-            font-weight: 600;
-            line-height: 32px;
-          }
-          .pubTime {
-            font-size: 13px;
-            line-height: 18px;
-            color: #9499a0;
-          }
-          margin: -6px 0 0 20px;
+      }
+
+      .card-content {
+        margin-left: 70px;
+        .text {
+          line-height: 25px;
         }
       }
     }
 
-    .card-content {
-      margin-left: 70px;
-      .text {
-        line-height: 25px;
-      }
+    .submit {
+      display: flex;
+      justify-content: end;
+      margin: 10px 0 20px;
     }
   }
 
   .right-card {
+    height: 636px;
     strong {
       font-weight: bold;
     }
