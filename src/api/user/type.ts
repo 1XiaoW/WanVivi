@@ -43,6 +43,7 @@ export interface UserDetail {
 // 用户信息请求接口返回数据类型
 export interface UserDetailResponseData extends ResponseData {
   data: UserDetail[];
+  total?: number;
 }
 
 // 修改用户头像接口返回数据类型

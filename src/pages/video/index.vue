@@ -9,14 +9,18 @@ import {
   reqVideoCollect,
   reqVideoCommentTotal,
   reqHotVideo,
+  reqChangeVideoState,
 } from '@/api/video/index.ts';
 import { reqOtherUserInfo } from '@/api/user/index';
 import { UserDetail } from '@/api/user/type';
 import { useRoute, useRouter } from 'vue-router';
 import { VideoInfo, LikeAndCollect } from '@/api/video/type.ts';
 import { pNumHandler } from '@/utils/dataProcessing.ts';
+import { ElMessage } from 'element-plus';
+import useUserStore from '@/store/modules/user';
 
 const server_url = import.meta.env.VITE_SERVER_URL;
+const userStore = useUserStore();
 const $route = useRoute();
 const $router = useRouter();
 const vId = ref(Number($route.query.videoId));
@@ -106,7 +110,6 @@ const onLike = async () => {
 // 收藏
 const onCollect = async () => {
   const res = await reqVideoCollect(vId.value);
-  console.log(res);
   if (res.status === 200) {
     getVideoLikeAndCollect();
     videoInfo();
@@ -116,8 +119,21 @@ const onCollect = async () => {
 // 打开热门视频新页面
 const openHot = (video_id: number) => {
   const url = $router.resolve(`/video?videoId=${video_id}`);
-  console.log(url);
   window.open(url.href, '_blank');
+};
+
+// 删除投稿视频
+const deleteVideo = async (vId: number) => {
+  const result = confirm('确定删除此投稿视频？');
+  if (result) {
+    const res = await reqChangeVideoState(vId, 3);
+    console.log(res);
+    if (res.status === 200) {
+      ElMessage.success('删除视频成功');
+      $router.push('/home');
+    }
+  } else {
+  }
 };
 
 // watch(
@@ -192,6 +208,12 @@ const openHot = (video_id: number) => {
               </li>
               <li>{{ videoUpload }}</li>
               <li>未经作者授权，禁止转载</li>
+              <li
+                v-if="vInfo.author_id === userStore.userInfo.userId"
+                style="cursor: pointer; color: #333"
+                @click="deleteVideo(vInfo.id)">
+                删除视频
+              </li>
             </ul>
           </div>
         </el-row>
@@ -438,6 +460,8 @@ const openHot = (video_id: number) => {
             border-radius: 50%;
             display: flex;
             justify-content: center;
+            object-fit: cover;
+            object-position: center;
             align-items: center;
           }
         }

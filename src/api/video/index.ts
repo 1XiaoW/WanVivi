@@ -28,6 +28,8 @@ enum API {
   VIDEO_COMMENTS_TOTAL = '/video/getVideoCommentTotal/',
   VIDEO_HOT = '/video/hot',
   FIVEVIDEOS_CHANNEL = '/video/getFiveVideosOfChannel/',
+  ALLCOMMENT_URL = '/video/allComment',
+  DELETECOMMENT_URL = '/video/auth/comment',
 }
 
 // 获取视频信息(可按频道取值)
@@ -57,7 +59,7 @@ export const reqHotVideo = () =>
 
 // 获取视频评论
 export const reqVideoComment = (
-  type: string,
+  type: string | Array<string>,
   source: number,
   offset: number = 1,
   limit: number = 5,
@@ -128,6 +130,7 @@ export const reqFiveVideosOfChannel = (channelId: Array<number>) =>
 // 更改投稿视频状态 0通过 1审核中 2未通过 3删除
 export const reqChangeVideoState = (videoId: number, state: number) =>
   request.post<any>(API.VIDEO_STATE, { videoId, state });
+
 // 删除视频投稿
 export const reqDeleteVideo = (authorId: number) =>
   request.get<any, VideoInfoResponseData>(API.VIDEO_COLLECTBYAUTHORID, {
@@ -146,4 +149,19 @@ export const reqApprovedVideo = (
       limit,
       state,
     },
+  });
+
+// 获取信息
+export const reqAllComments = (offset: number, limit: number) =>
+  request.get<any>(API.ALLCOMMENT_URL, {
+    params: {
+      offset,
+      limit,
+    },
+  });
+
+// 删除评论
+export const reqDeleteCom = (id: number) =>
+  request.delete<any>(API.DELETECOMMENT_URL, {
+    params: { id },
   });

@@ -5,11 +5,15 @@ import type {
   CommentsResultContent,
   CommentsResponseData,
 } from '@/api/video/type.ts';
-import { reqVideoComment, reqVideoCommentPost } from '@/api/video/index.ts';
+import {
+  reqVideoComment,
+  reqVideoCommentPost,
+  reqDeleteCom,
+} from '@/api/video/index.ts';
 import useUserStore from '@/store/modules/user';
 import { ElMessage } from 'element-plus';
 
-const useStore = useUserStore();
+const userStore = useUserStore();
 const server_url = import.meta.env.VITE_SERVER_URL;
 
 const props = defineProps(['vId']);
@@ -83,12 +87,11 @@ lazyLoad();
 // 发布评论
 const onPostComment = async () => {
   let params = {
-    userId: useStore.userInfo.userId,
+    userId: userStore.userInfo.userId,
     vId,
     commentText: commentText.value,
   };
   const res: any = await reqVideoCommentPost(params);
-  console.log(res);
   if (res.status === 200) {
     // lazyLoad();
     // 在发布评论成功后将新评论插入到评论列表的最前面
@@ -114,7 +117,7 @@ const onPostComment = async () => {
 // 评论回复
 const onPostReply = async () => {
   let params = {
-    userId: useStore.userInfo.userId,
+    userId: userStore.userInfo.userId,
     vId,
     contentType: 'c',
     com_id: replyMark.value,
@@ -145,6 +148,19 @@ const openReply = async (com_id: string) => {
   reply.value = true;
   replyMark.value = com_id;
 };
+
+// 删除评论
+const deleteCom = async (id: number) => {
+  const result = confirm('确定删除评论吗？');
+  if (result) {
+    const res = await reqDeleteCom(id);
+    if (res.status === 200) {
+      location.reload();
+      ElMessage.success('评论删除成功');
+    }
+  } else {
+  }
+};
 </script>
 
 <template>
@@ -154,7 +170,7 @@ const openReply = async (com_id: string) => {
     </div>
     <div class="comment_post">
       <div class="left_avatar">
-        <el-avatar :src="server_url + useStore.userInfo.avatar" />
+        <el-avatar :src="server_url + userStore.userInfo.avatar" />
       </div>
       <div class="middle_content">
         <el-input
@@ -180,7 +196,14 @@ const openReply = async (com_id: string) => {
               <div class="author_left">
                 {{ item.nickname ? item.nickname : item.username }}
               </div>
-              <div class="author_right">关注</div>
+              <!-- <div class="author_right">关注</div> -->
+              <div
+                class="author_right"
+                style="cursor: pointer"
+                v-if="item.aut_id === userStore.userInfo.userId"
+                @click="deleteCom(item.id)">
+                删除
+              </div>
             </div>
           </div>
           <div class="list_bottom">
@@ -190,13 +213,17 @@ const openReply = async (com_id: string) => {
                 {{ item.pubdate }}
                 <span @click="openReply(item.com_id)">回复</span>
               </div>
-              <Reply ref="replyRef" :vId="vId" :comId="item.com_id" />
+              <Reply
+                ref="replyRef"
+                :vId="vId"
+                :comId="item.com_id"
+                :currentUser="userStore.userInfo.userId" />
               <div
                 class="comment_post"
                 style="margin-top: 10px"
                 v-show="reply && replyMark === item.com_id">
                 <div class="left_avatar">
-                  <el-avatar :src="server_url + useStore.userInfo.avatar" />
+                  <el-avatar :src="server_url + userStore.userInfo.avatar" />
                 </div>
                 <div class="middle_content">
                   <el-input

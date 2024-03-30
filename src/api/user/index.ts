@@ -36,6 +36,10 @@ enum API {
   ADDDYNAMIC_URL = '/user/auth/addDynamic/',
   // 删除动态
   DELETEDYNAMIC_URL = '/user/auth/deleteDynamic/',
+  // 通过用户名进行模糊查找
+  SEARCHBYUSERNAME_URL = '/user/auth/searchByUsername/',
+  // 删除用户
+  DELETEUSER_URL = '/user/auth/deleteById/',
 }
 
 export const reqUserLogin = (data: DataParameter) =>
@@ -52,8 +56,17 @@ export const reqUserReadState = (id: number) =>
     API.USERREADSTATE_URL + id
   );
 
-export const reqOtherUserInfo = (id: number = -1) =>
-  request.get<any, UserDetailResponseData>(API.USERINFO_OTHER_URL + id);
+export const reqOtherUserInfo = (
+  id: number = -1,
+  offset: number = 1,
+  limit: number = 10
+) =>
+  request.get<any, UserDetailResponseData>(API.USERINFO_OTHER_URL + id, {
+    params: {
+      offset,
+      limit,
+    },
+  });
 
 export const reqModifyUserInfo = (id: number, data: object) =>
   request.put<any, ResponseData>(API.MODIFYUSERINFO_URL + id, data);
@@ -81,3 +94,15 @@ export const reqAddDynamic = (id: number, text: Text) =>
 
 export const reqDeleteDynamic = (id: number) =>
   request.delete<any, ResponseData>(API.DELETEDYNAMIC_URL + id);
+
+// 按照消息标题进行模糊查找
+export const reqSearchUser = (username: string) =>
+  request.get<any>(API.SEARCHBYUSERNAME_URL, {
+    params: { username },
+  });
+
+// 删除信息
+export const reqDeleteUser = (userId: number) =>
+  request.delete<any, ResponseData>(API.DELETEUSER_URL, {
+    params: { userId },
+  });

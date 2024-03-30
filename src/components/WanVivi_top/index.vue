@@ -1,6 +1,13 @@
 <script setup lang="ts">
 //@ts-ignore
-import { VideoCamera, Download, Search, Upload } from '@element-plus/icons-vue';
+import {
+  Search,
+  Upload,
+  CircleCheck,
+  Star,
+  Ship,
+  Message,
+} from '@element-plus/icons-vue';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { reqUserReadState } from '@/api/user/index';
@@ -201,16 +208,16 @@ const goAnchor = (plate: number) => {
 
           <li @click="goMessage">
             <div class="red-message" v-if="readState"></div>
-            <el-icon size="18"><Search /></el-icon>消息
+            <el-icon size="18"><Message /></el-icon>消息
           </li>
           <li @click="goDynamic">
-            <el-icon size="18"><Search /></el-icon>动态
+            <el-icon size="18"><Ship /></el-icon>动态
           </li>
           <li @click="goStar">
-            <el-icon size="18"><Search /></el-icon>收藏
+            <el-icon size="18"><Star /></el-icon>收藏
           </li>
           <li @click="goFeedback">
-            <el-icon size="18"><Search /></el-icon>我要反馈
+            <el-icon size="18"><CircleCheck /></el-icon>我要反馈
           </li>
           <!-- 暂未开发 -->
           <!-- <li>

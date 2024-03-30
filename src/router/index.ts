@@ -1,4 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
+import { GET_TOKEN } from '@/utils/user';
+import { ElMessage } from 'element-plus';
 
 const router = createRouter({
   // 路由的模式设置
@@ -12,6 +14,7 @@ const router = createRouter({
     {
       path: '/submit',
       component: () => import('@/pages/submit/index.vue'),
+      meta: { requiresAuth: true },
     },
     {
       path: '/video',
@@ -20,11 +23,13 @@ const router = createRouter({
     {
       path: '/userInfo',
       component: () => import('@/pages/user/userInfo.vue'),
+      meta: { requiresAuth: true },
     },
     {
       path: '/userSpace/:userId',
       component: () => import('@/pages/user/userSpace.vue'),
       redirect: { name: 'home' },
+      meta: { requiresAuth: true },
       children: [
         {
           path: 'dynamic',
@@ -60,6 +65,7 @@ const router = createRouter({
       path: '/message',
       component: () => import('@/pages/message/index.vue'),
       redirect: { name: 'system' },
+      meta: { requiresAuth: true },
       children: [
         {
           name: 'system',
@@ -78,6 +84,7 @@ const router = createRouter({
       path: '/manage',
       component: () => import('@/pages/manage/index.vue'),
       redirect: { name: 'message' },
+      meta: { requiresAuth: true },
       children: [
         {
           name: 'message',
@@ -91,6 +98,14 @@ const router = createRouter({
         {
           path: 'audited',
           component: () => import('@/pages/manage/video/audited.vue'),
+        },
+        {
+          path: 'user',
+          component: () => import('@/pages/manage/user/index.vue'),
+        },
+        {
+          path: 'comment',
+          component: () => import('@/pages/manage/comment/index.vue'),
         },
       ],
     },
@@ -107,8 +122,20 @@ const router = createRouter({
 });
 
 router.beforeEach((to: any, from: any, next: any) => {
-  //判断该用户有没有登录过
-  next();
+  if (to.matched.some((record: any) => record.meta.requiresAuth)) {
+    // 判断该路由是否需要登录验证
+    if (!GET_TOKEN()) {
+      // 如果用户未登录，则跳转到登录页面
+      next('/home');
+      ElMessage.error('用户未登录');
+    } else {
+      // 如果用户已登录，则允许进入路由
+      next();
+    }
+  } else {
+    // 如果不需要登录验证，则直接进入路由
+    next();
+  }
 });
 
 export default router;

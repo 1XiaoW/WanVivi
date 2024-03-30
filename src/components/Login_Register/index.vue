@@ -136,6 +136,7 @@ const loginOrReg = (state: boolean) => {
           <el-form-item prop="password">
             <el-input
               placeholder="请输入密码"
+              type="password"
               :prefix-icon="Lock"
               size="large"
               v-model="dataParam.password"></el-input>
@@ -146,7 +147,7 @@ const loginOrReg = (state: boolean) => {
         </div>
         <el-button class="btn" @click="login" v-if="isLogin">登录 </el-button>
         <el-button class="btn" @click="register" v-else>注册 </el-button>
-        <div class="other-login">
+        <!-- <div class="other-login">
           <div class="divider">
             <span class="line"></span>
             <span class="divider-text">或使用以下登录</span>
@@ -186,7 +187,7 @@ const loginOrReg = (state: boolean) => {
               <span>WeChat</span>
             </div>
           </div>
-        </div>
+        </div> -->
         <div class="request">
           {{ isLogin ? '还没有账号？' : '已有帐号？'
           }}<span @click="loginOrReg(!isLogin)">{{

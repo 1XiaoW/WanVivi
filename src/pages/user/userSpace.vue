@@ -122,7 +122,7 @@ watch(
 
 <template>
   <div class="container">
-    <WanViviTop />
+    <WanViviTop :specialPage="true" />
     <div class="content">
       <div class="header">
         <div class="gradient"></div>

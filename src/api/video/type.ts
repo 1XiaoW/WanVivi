@@ -47,6 +47,7 @@ export interface VideoInfo {
 
 // 评论result里的数据
 export interface CommentsResult {
+  id: number;
   com_id: string;
   aut_id: number;
   like_count: number;

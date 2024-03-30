@@ -39,10 +39,10 @@ request.interceptors.response.use(
       case 401:
         REMOVE_TOKEN();
         userStore.isLogin = false;
-        ElMessage({
-          type: 'error',
-          message: '用户身份已过期，请重新登录',
-        });
+        // ElMessage({
+        //   type: 'error',
+        //   message: '用户身份已过期，请重新登录',
+        // });
         break;
       case 404:
         //错误提示信息

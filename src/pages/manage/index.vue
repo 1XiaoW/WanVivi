@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { House, Tools } from '@element-plus/icons-vue';
+import { House, Tools, Tickets, User } from '@element-plus/icons-vue';
 </script>
 
 <template>
@@ -23,6 +23,14 @@ import { House, Tools } from '@element-plus/icons-vue';
               <el-menu-item index="/manage/audited">已审核</el-menu-item>
             </el-menu-item-group>
           </el-sub-menu>
+          <el-menu-item index="/manage/user">
+            <el-icon><User /></el-icon>
+            <span>用户管理</span>
+          </el-menu-item>
+          <el-menu-item index="/manage/comment">
+            <el-icon><Tickets /></el-icon>
+            <span>评论管理</span>
+          </el-menu-item>
         </el-menu>
       </el-aside>
       <el-container>

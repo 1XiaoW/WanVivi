@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import type { Comments, CommentsResponseData } from '@/api/video/type.ts';
-import { reqVideoComment } from '@/api/video/index.ts';
+import { reqDeleteCom, reqVideoComment } from '@/api/video/index.ts';
+import { ElMessage } from 'element-plus';
 const server_url = import.meta.env.VITE_SERVER_URL;
 
-let props = defineProps(['vId', 'comId']);
+let props = defineProps(['vId', 'comId', 'currentUser']);
 let list = ref<Comments>({
   total: 0,
   page: 0,
@@ -35,6 +36,19 @@ const handleCurrentChange = (val: number) => {
   replyList();
 };
 
+// 删除评论回复
+const deleteReply = async (id: number) => {
+  const result = confirm('确定删除回复吗？');
+  if (result) {
+    const res = await reqDeleteCom(id);
+    if (res.status === 200) {
+      location.reload();
+      ElMessage.success('评论回复删除成功');
+    }
+  } else {
+  }
+};
+
 defineExpose({ replyList });
 </script>
 
@@ -52,7 +66,14 @@ defineExpose({ replyList });
               <span style="color: black; font-size: 16px; margin-left: 20px">
                 {{ item.content }}
               </span>
-              <div class="time">{{ item.pubdate }}</div>
+              <div class="time">
+                {{ item.pubdate }} &nbsp;&nbsp;<span
+                  style="cursor: pointer"
+                  v-if="item.aut_id === currentUser"
+                  @click="deleteReply(item.id)"
+                  >删除</span
+                >
+              </div>
             </div>
           </div>
         </div>
