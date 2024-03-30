@@ -165,26 +165,6 @@ const passwordRules = reactive<FormRules<typeof userPwd>>({
   confirmPwd: [{ validator: validatePass2, trigger: 'blur', required: true }],
 });
 
-const userInfoRules = reactive<FormRules<typeof userPwd>>({
-  nickname: [
-    {
-      required: true,
-      message: () => {
-        return `原密码不能为空`;
-      },
-      trigger: 'blur',
-    },
-    {
-      max: 16,
-      message: () => {
-        return `最大密码长度为16`;
-      },
-    },
-  ],
-  email: [{ validator: validatePass, trigger: 'blur', required: true }],
-  confirmPwd: [{ validator: validatePass2, trigger: 'blur', required: true }],
-});
-
 const goUserSpace = (el: any) => {
   let current = el.props.name;
   // 为了打开新窗口用下面方式
