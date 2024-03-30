@@ -8,6 +8,7 @@ export interface ResponseData {
 export interface DataParameter {
   username: string;
   password: string;
+  repassword?: string;
 }
 
 // 登录接口返回的数据类型

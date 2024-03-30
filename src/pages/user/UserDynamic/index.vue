@@ -274,7 +274,8 @@ const handleCreated = (editor: any) => {
   }
 
   .right-card {
-    height: 636px;
+    height: 920px;
+    line-height: 1.5;
     strong {
       font-weight: bold;
     }

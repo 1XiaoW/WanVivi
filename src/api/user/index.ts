@@ -40,6 +40,8 @@ enum API {
   SEARCHBYUSERNAME_URL = '/user/auth/searchByUsername/',
   // 删除用户
   DELETEUSER_URL = '/user/auth/deleteById/',
+  // 发送邮箱验证码
+  SENDCODE_URL = '/user/auth/sendCode',
 }
 
 export const reqUserLogin = (data: DataParameter) =>
@@ -106,3 +108,7 @@ export const reqDeleteUser = (userId: number) =>
   request.delete<any, ResponseData>(API.DELETEUSER_URL, {
     params: { userId },
   });
+
+// 发送邮箱验证码
+export const reqSendCode = (email: string) =>
+  request.post<any, ResponseData>(API.SENDCODE_URL, { email });

@@ -10,6 +10,7 @@ import {
   reqUserInfo,
   reqModifyPassword,
   reqModifyAvatar,
+  reqSendCode,
 } from '@/api/user';
 
 const $router = useRouter();
@@ -48,6 +49,7 @@ const userInfo = reactive({
   name: '',
   nickname: '',
   email: '',
+  code: '',
 });
 
 // 修改密码信息
@@ -61,6 +63,11 @@ const userPwd = reactive({
 const onModifyUserInfo = async () => {
   const res = await reqModifyUserInfo(userId, userInfo);
   console.log(res);
+  if (res.status === 200) {
+    ElMessage.success('修改个人信息成功');
+  } else {
+    ElMessage.error(res.message);
+  }
 };
 
 // 头像上传
@@ -105,7 +112,10 @@ const onModifyPwd = async (pwdFormRef: FormInstance) => {
   await pwdFormRef.validate();
   try {
     const res = await reqModifyPassword(userId, userPwd);
-    console.log(res);
+    if (res.status === 200) {
+      ElMessage.success('修改密码成功');
+    }
+    // console.log(res);
   } catch (error: any) {
     console.log(error.message);
   }
@@ -155,6 +165,26 @@ const passwordRules = reactive<FormRules<typeof userPwd>>({
   confirmPwd: [{ validator: validatePass2, trigger: 'blur', required: true }],
 });
 
+const userInfoRules = reactive<FormRules<typeof userPwd>>({
+  nickname: [
+    {
+      required: true,
+      message: () => {
+        return `原密码不能为空`;
+      },
+      trigger: 'blur',
+    },
+    {
+      max: 16,
+      message: () => {
+        return `最大密码长度为16`;
+      },
+    },
+  ],
+  email: [{ validator: validatePass, trigger: 'blur', required: true }],
+  confirmPwd: [{ validator: validatePass2, trigger: 'blur', required: true }],
+});
+
 const goUserSpace = (el: any) => {
   let current = el.props.name;
   // 为了打开新窗口用下面方式
@@ -162,6 +192,11 @@ const goUserSpace = (el: any) => {
     const url = $router.resolve(`userSpace/${userId}`);
     window.open(url.href, '_blank');
   }
+};
+
+const sendCode = async () => {
+  const res = await reqSendCode(userInfo.email);
+  console.log(res);
 };
 </script>
 
@@ -200,9 +235,16 @@ const goUserSpace = (el: any) => {
                 <el-input v-model="userInfo.nickname" />
               </el-form-item>
               <el-form-item label="邮箱">
-                <el-input v-model="userInfo.email" />
+                <div style="display: flex">
+                  <el-input
+                    v-model="userInfo.email"
+                    style="margin-right: 10px" />
+                  <el-button @click="sendCode">发送验证码</el-button>
+                </div>
               </el-form-item>
-
+              <el-form-item label="验证码">
+                <el-input v-model="userInfo.code" />
+              </el-form-item>
               <el-form-item class="save">
                 <el-button type="primary" @click="onModifyUserInfo"
                   >保存</el-button

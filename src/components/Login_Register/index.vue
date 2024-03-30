@@ -8,14 +8,15 @@ import { reqUserRegister } from '@/api/user/index.ts';
 import type { ResponseData, DataParameter } from '@/api/user/type.ts';
 
 // 获取form组件实例
-let form = ref<any>();
+const form = ref<any>();
 
-let userStore = useUserStore();
-let dataParam = reactive<DataParameter>({
+const userStore = useUserStore();
+const dataParam = reactive<DataParameter>({
   username: 'dzq',
   password: '123456',
+  repassword: '',
 });
-let isLogin = ref<boolean>(true);
+const isLogin = ref<boolean>(true);
 
 onMounted(() => {
   isCookie();
@@ -42,9 +43,18 @@ const validatorPassword = (rule: any, value: any, callback: any) => {
   }
 };
 
+const validatorRePassword = (rule: any, value: any, callback: any) => {
+  if (!isLogin && value !== dataParam.password) {
+    callback(new Error('两次输入的密码不一致'));
+  } else {
+    callback();
+  }
+};
+
 const rules = {
   username: [{ trigger: 'blur', validator: validatorUsername }],
   password: [{ trigger: 'blur', validator: validatorPassword }],
+  repassword: [{ trigger: 'blur', validator: validatorRePassword }],
 };
 
 // 登录回调
@@ -53,7 +63,9 @@ const login = async () => {
   // await form.value.validate();
   try {
     //用户登录成功
-    await userStore.userLogin(dataParam);
+    const { username, password } = dataParam;
+    const data = { username, password };
+    await userStore.userLogin(data);
     userStore.isLogin = true;
     //关闭对话框
     userStore.visible = false;
@@ -68,7 +80,9 @@ const login = async () => {
 const register = async () => {
   await form.value.validate();
   try {
-    let result: ResponseData = await reqUserRegister(dataParam);
+    const { username, password } = dataParam;
+    const data = { username, password };
+    const result: ResponseData = await reqUserRegister(data);
     if (result.status !== 200) {
       return ElMessage({
         type: 'error',
@@ -141,10 +155,18 @@ const loginOrReg = (state: boolean) => {
               size="large"
               v-model="dataParam.password"></el-input>
           </el-form-item>
+          <el-form-item prop="repassword" v-show="!isLogin">
+            <el-input
+              placeholder="请再次输入密码"
+              type="password"
+              :prefix-icon="Lock"
+              size="large"
+              v-model="dataParam.repassword"></el-input>
+          </el-form-item>
         </el-form>
-        <div class="forgot-pwd">
+        <!-- <div class="forgot-pwd">
           <span>忘记密码</span>
-        </div>
+        </div> -->
         <el-button class="btn" @click="login" v-if="isLogin">登录 </el-button>
         <el-button class="btn" @click="register" v-else>注册 </el-button>
         <!-- <div class="other-login">
